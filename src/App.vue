@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import logo from '@/assets/todo_logo.svg'
+
+import LoginPage from '@/pages/LoginPage.vue'
 </script>
 
 <template>
-    <div>
-        <img :src="logo" alt="">
+    <div class="max-w-[500px] mx-auto">
+        <LoginPage />
     </div>
 </template>
 
