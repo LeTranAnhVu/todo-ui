@@ -41,7 +41,8 @@ const tasks = [item,  item2]
 </script>
 
 <template>
-    <div>
+    <div class="flex flex-col gap-10">
+        <TodoList :date="new Date()" :tasks="tasks"></TodoList>
         <TodoList :date="new Date(2023, 11, 15)" :tasks="tasks"></TodoList>
     </div>
 </template>

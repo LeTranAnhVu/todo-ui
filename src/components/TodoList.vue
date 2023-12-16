@@ -27,7 +27,7 @@ const displayDay = computed(() => luxonDt.value.toFormat('d LLL yy'))
 
 <template>
     <div>
-        <div>
+        <div class="mb-3">
             <p class="text-sm text-gray-700">
                 <span class="text-lg font-medium">{{ relativeDay }}</span>
                 {{ displayDay }}

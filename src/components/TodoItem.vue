@@ -12,10 +12,7 @@ const props = defineProps<Props>()
 const { item } = toRefs(props)
 const miniTasks = computed(() => item?.value?.items.length)
 const doneMiniTasks = computed(() => item?.value?.items.filter(task => task.isCompleted).length)
-const checked = ref(true)
-watch(checked, (ne, old) => {
-    console.log(checked.value)
-})
+const checked = ref(item.value.isCompleted)
 
 </script>
 
@@ -23,7 +20,7 @@ watch(checked, (ne, old) => {
     <div class="todo">
         <div class="left">
             <Checkbox v-model="checked"/>
-            <p>{{ item?.name }}</p>
+            <p class="name" :data-done="checked">{{ item?.name }}</p>
         </div>
         <div class="right">
             <p>{{ doneMiniTasks }}/{{ miniTasks }} tasks</p>
@@ -39,6 +36,10 @@ watch(checked, (ne, old) => {
     
     .left {
         @apply flex flex-nowrap gap-2 items-center;
+        .name[data-done=true] {
+            @apply line-through;
+        }
     }
+    
 }
 </style>
