@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import TodoItem from '@/components/TodoItem.vue'
-import type { TodoItemType } from '@/lib/types/TodoItem.ts'
+import type { TodoTask } from '@/lib/types/TodoTask.ts'
 import { computed, toRefs } from 'vue'
 import { DateTime } from 'luxon'
 
 type Props = {
-    tasks: TodoItemType[]
+    tasks: TodoTask[]
     date: Date
 }
 
@@ -34,7 +34,7 @@ const displayDay = computed(() => luxonDt.value.toFormat('d LLL yy'))
             </p>
         </div>
         <div class="todos">
-            <TodoItem v-for="task in tasks" :key="task.name" :item="task" />
+            <TodoItem v-for="task in tasks" :key="task.name" :task="task" />
         </div>
     </div>
 </template>

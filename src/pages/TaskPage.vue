@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import TodoList from '@/components/TodoList.vue'
-import type { TodoItemType } from '@/lib/types/TodoItem.ts'
+import type { TodoTask } from '@/lib/types/TodoTask.ts'
 import { cloneDeep } from 'lodash'
 
-const item: TodoItemType = {
+const task: TodoTask = {
     name: 'Learn Piano',
     isCompleted: false,
-    items: [
+    tasks: [
         {
             name: 'task 1',
             isCompleted: false,
@@ -19,13 +19,13 @@ const item: TodoItemType = {
             name: 'task 3',
             isCompleted: true,
         }
-    ] as TodoItemType[]
+    ] as TodoTask[]
 }
 
-const item2: TodoItemType = {
+const task2: TodoTask = {
     name: 'Learn Coding',
     isCompleted: false,
-    items: [
+    tasks: [
         {
             name: 'task 1',
             isCompleted: false,
@@ -34,10 +34,10 @@ const item2: TodoItemType = {
             name: 'task 2',
             isCompleted: false,
         },
-    ] as TodoItemType[]
+    ] as TodoTask[]
 }
 
-const tasks = [item,  item2]
+const tasks = [task, task2]
 const tasks2 = cloneDeep(tasks)
 
 </script>

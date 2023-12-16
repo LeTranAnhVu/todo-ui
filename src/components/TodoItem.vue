@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import type { TodoItemType } from '@/lib/types/TodoItem.ts'
+import type { TodoTask } from '@/lib/types/TodoTask.ts'
 import { computed, reactive, ref, toRefs } from 'vue'
 import Checkbox from '@/components/Checkbox.vue'
 
 type Props = {
-    item: TodoItemType
+    task: TodoTask
 }
 
 const props = defineProps<Props>()
 
 // TODO we can refactor this to computed and new value is set to state management
-const item = reactive({ ...toRefs(props).item.value })
+const task = reactive({ ...toRefs(props).task.value })
 
-const miniTasks = computed(() => item?.items.length || 0)
-const doneMiniTasks = computed(() => item?.items.filter(task => task.isCompleted).length || 0)
+const subTasks = computed(() => task?.tasks.length || 0)
+const completedSubTasks = computed(() => task?.tasks.filter(task => task.isCompleted).length || 0)
 
 // Collapsing
 const isCollapsed = ref(false)
@@ -24,30 +24,30 @@ const handleCollapseTask = () => {
 </script>
 
 <template>
-    <div class="task" :data-collapsed="isCollapsed" :data-completed="item.isCompleted">
+    <div class="task" :data-collapsed="isCollapsed" :data-completed="task.isCompleted">
         <div class="main">
             <div class="left">
-                <Checkbox v-model="item.isCompleted" />
-                <p class="name">{{ item?.name }}</p>
+                <Checkbox v-model="task.isCompleted" />
+                <p class="name">{{ task?.name }}</p>
             </div>
             <div class="right">
-                <p v-if="miniTasks">{{ doneMiniTasks }}/{{ miniTasks }} tasks</p>
+                <p v-if="subTasks">{{ completedSubTasks }}/{{ subTasks }} tasks</p>
                 <Icon
-                    v-if="miniTasks"
+                    v-if="subTasks"
                     icon="fa-solid fa-angle-left"
                     class="cursor-pointer collapsed-icon"
                     @click="handleCollapseTask"></Icon>
             </div>
         </div>
         <div class="collapsed">
-            <!--  mini tasks -->
-            <ul v-if="item.items.length && isCollapsed" class="mini-tasks">
-                <li v-for="miniTask in item.items" :key="`${item.name}-${miniTask.name}`" class="task"
-                    :data-completed="miniTask.isCompleted">
+            <!--  sub tasks -->
+            <ul v-if="task.tasks.length && isCollapsed" class="sub-tasks">
+                <li v-for="subTask in task.tasks" :key="`${task.name}-${subTask.name}`" class="task"
+                    :data-completed="subTask.isCompleted">
                     <div class="main">
                         <div class="left">
-                            <Checkbox v-model="miniTask.isCompleted" />
-                            <p class="name">{{ miniTask?.name }}</p>
+                            <Checkbox v-model="subTask.isCompleted" />
+                            <p class="name">{{ subTask.name }}</p>
                         </div>
                         <div class="right">
                             <!-- nothing here -->
@@ -87,7 +87,7 @@ const handleCollapseTask = () => {
         @apply h-0 invisible
         transition-all duration-200 ease-in-out;
 
-        .mini-tasks {
+        .sub-tasks {
             @apply flex flex-col gap-3;
         }
     }
