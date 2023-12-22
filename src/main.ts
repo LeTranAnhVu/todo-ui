@@ -5,7 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faUserSecret, faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from '@fortawesome/free-regular-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
+import { router } from '@/router.ts'
 
 library.add(faUserSecret, faAngleLeft, faCircleXmark)
 
-createApp(App).component('Icon', FontAwesomeIcon).mount('#app')
+const app = createApp(App)
+
+app.component('Icon', FontAwesomeIcon)
+app.use(router)
+app.mount('#app')

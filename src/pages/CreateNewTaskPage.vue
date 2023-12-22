@@ -6,26 +6,35 @@ import Checkbox from '@/components/Checkbox.vue'
 import { reactive } from 'vue'
 import PrimaryOutlineBtn from '@/components/PrimaryOutlineBtn.vue'
 
-const taskForm = reactive({
+type CreateSubTask = {
+    id?: string
+    isRepeated: boolean
+    name: string 
+}
+
+type CreateNewTask = CreateSubTask & {
+    tasks: CreateSubTask[]
+}
+const taskForm = reactive<CreateNewTask>({
     name: '',
     isRepeated: false,
-    tasks: []
+    tasks: [],
 })
 
 const addNewSubTask = () => {
     taskForm.tasks.push({
         id: `TMP_${uuidv4()}`,
         name: '',
-        isRepeated: false
+        isRepeated: false,
     })
 }
 
-const deleteSubTask = (id: number) => {
+const deleteSubTask = (id?: string) => {
     const idx = taskForm.tasks.findIndex(t => t.id === id)
     taskForm.tasks.splice(idx, 1)
 }
 
-const formErrors = reactive({
+const formErrors = reactive<{name: [boolean, string], tasks: Record<string, [boolean, string]>}>({
     name: [false, ''],
     tasks: {}
 })
@@ -37,16 +46,16 @@ const validate = (): boolean => {
         formErrors.name = [true, 'Required']
         isvalid = false
     } else {
-        formErrors.name = [false, null]
+        formErrors.name = [false, '']
     }
 
     // subtasks name are required
     for (const subTask of taskForm.tasks) {
         if (!subTask.name) {
-            formErrors.tasks[subTask.id] = [true, 'Required']
+            formErrors.tasks[subTask?.id || 'unknown'] = [true, 'Required']
             isvalid = false
         } else {
-            formErrors.tasks[subTask.id] = [false, null]
+            formErrors.tasks[subTask?.id || 'unknown']  = [false, '']
         }
     }
 
@@ -86,18 +95,18 @@ const createTask = () => {
                     <div class="inputField">
                         <input
                             v-model="subTask.name" type="text" class="input-text"
-                            :data-invalid="!!(formErrors.tasks[subTask.id]?.[0])">
+                            :data-invalid="!!(formErrors.tasks[subTask?.id || 'unknown']?.[0])">
                         <span
-                            v-if="formErrors.tasks[subTask.id]?.[1]"
+                            v-if="formErrors.tasks[subTask?.id || 'unknown']?.[1]"
                             class="errorMessage">
-                    {{ formErrors.tasks[subTask.id]?.[1] }} </span>
+                    {{ formErrors.tasks[subTask?.id || 'unknown']?.[1] }} </span>
                     </div>
                     <Checkbox
                         v-model="subTask.isRepeated"
                         label="Repeat daily:" />
 
                     <Icon icon="fa-regular fa-circle-xmark" size="lg" class="closeIcon"
-                          @click="deleteSubTask(subTask.id)" />
+                          @click="deleteSubTask(subTask?.id)" />
                 </div>
             </div>
 
