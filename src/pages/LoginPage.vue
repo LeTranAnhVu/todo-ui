@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import logo from '@/assets/todo_logo.svg'
 import PrimaryOutlineBtn from '@/components/PrimaryOutlineBtn.vue'
+import { router } from '@/router.ts'
 
+const handleLogin = () => {
+    router.push({name: 'home'})
+}
 </script>
 
 <template>
@@ -12,11 +16,10 @@ import PrimaryOutlineBtn from '@/components/PrimaryOutlineBtn.vue'
             <p class="text-slate-500">Build your target, get your dream</p>
         </div>
         <div class="w-full px-9">
-            <PrimaryOutlineBtn>Login</PrimaryOutlineBtn>
+            <PrimaryOutlineBtn @click="handleLogin">Login</PrimaryOutlineBtn>
         </div>
     </div>
 </template>
 
 <style scoped lang="scss">
-
 </style>

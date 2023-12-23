@@ -4,7 +4,7 @@
 
 <template>
     <div class="navbar">
-        <router-link :to="{name: 'tasks'}" class="navbar-item active">
+        <router-link :to="{name: 'tasks'}" class="navbar-item">
             Tasks
         </router-link>
         <router-link disabled to="/reports" class="navbar-item">
