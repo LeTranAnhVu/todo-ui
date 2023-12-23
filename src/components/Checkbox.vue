@@ -7,17 +7,19 @@ type Props = {
     label?: string
 }
 
-const formatBoolean = (value) => value === 'true'
+defineEmits(['update:modelValue'])
+const formatBoolean = (value: string) => value === 'true'
 const props = defineProps<Props>()
 
 const { modelValue, label } = toRefs(props)
-const input = ref(null)
+const input = ref<HTMLInputElement | null>(null)
 
 const handleClick = async () => {
-    const el = input.value as HTMLInputElement
-    console.log('check', el.value)
-    el.value = !formatBoolean(el.value)
-    el.dispatchEvent(new Event('input'))
+    const el = input.value
+    if (el) {
+        el.value = el.value === 'true' ? 'false': 'true'
+        el.dispatchEvent(new Event('input'))
+    }
 }
 </script>
 
@@ -26,7 +28,7 @@ const handleClick = async () => {
         <span v-if="label">{{ label }}</span>
         <div class="input-wrapper" @click="handleClick">
             <input ref="input" :value="modelValue" type="checkbox"
-                   @input="$emit('update:modelValue',  formatBoolean($event.target.value))">
+                   @input="$emit('update:modelValue',  formatBoolean(($event.target as HTMLInputElement).value))">
         </div>
     </div>
 </template>
@@ -53,8 +55,6 @@ const handleClick = async () => {
             @apply appearance-none;
         }
     }
-
-    
 
 
     &[data-checked=true] {
