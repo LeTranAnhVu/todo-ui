@@ -4,13 +4,13 @@
 
 <template>
     <div class="navbar">
-        <router-link to="/tasks" class="navbar-item active">
+        <router-link :to="{name: 'tasks'}" class="navbar-item active">
             Tasks
         </router-link>
         <router-link disabled to="/reports" class="navbar-item">
             Reports
         </router-link>
-        <router-link to="/create-task" class="navbar-item">
+        <router-link :to="{name: 'create-task'}" class="navbar-item">
             New task
         </router-link>
     </div>
@@ -28,6 +28,7 @@
         &.router-link-active {
             @apply text-white font-normal bg-black;
         }
+
         &[disabled] {
             @apply opacity-50 pointer-events-none;
         }

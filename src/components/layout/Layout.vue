@@ -9,7 +9,7 @@ import NavBar from '@/components/layout/NavBar.vue'
     <div class="header flex px-4">
         <div class="buffer grow"></div>
         <div class="w-max">
-       <NakedDangerBtn>Sign out</NakedDangerBtn>   
+            <NakedDangerBtn>Sign out</NakedDangerBtn>
         </div>
     </div>
     <div class="logo mb-10">
@@ -19,7 +19,7 @@ import NavBar from '@/components/layout/NavBar.vue'
         <NavBar></NavBar>
     </div>
     <div class="px-4">
-        <slot></slot>
+        <router-view></router-view>
     </div>
 </div>
 </template>

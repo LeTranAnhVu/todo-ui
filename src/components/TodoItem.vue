@@ -31,12 +31,14 @@ const handleCollapseTask = () => {
                 <p class="name">{{ task?.name }}</p>
             </div>
             <div class="right">
-                <p v-if="subTasks">{{ completedSubTasks }}/{{ subTasks }} tasks</p>
-                <Icon
-                    v-if="subTasks"
-                    icon="fa-solid fa-angle-left"
-                    class="cursor-pointer collapsed-icon"
-                    @click="handleCollapseTask"></Icon>
+                <div class="sub-task-action" @click="handleCollapseTask">
+                    <p v-if="subTasks">{{ completedSubTasks }}/{{ subTasks }} tasks</p>
+                    <Icon
+                        v-if="subTasks"
+                        icon="fa-solid fa-angle-left"
+                        class="collapsed-icon"
+                    ></Icon>
+                </div>
             </div>
         </div>
         <div class="collapsed">
@@ -77,8 +79,12 @@ const handleCollapseTask = () => {
         .right {
             @apply flex flex-nowrap gap-2 items-center;
 
-            .collapsed-icon {
-                @apply transition-all duration-200 ease-in-out;
+            .sub-task-action {
+                @apply flex flex-nowrap gap-2 items-center cursor-pointer;
+                
+                .collapsed-icon {
+                    @apply transition-all duration-200 ease-in-out;
+                }
             }
         }
     }

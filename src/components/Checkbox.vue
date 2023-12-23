@@ -38,7 +38,7 @@ const handleClick = async () => {
 
     .input-wrapper {
         @apply relative
-        w-5 h-5 rounded-full ring-1 ring-black bg-transparent;
+        w-5 h-5 rounded-full ring-1 ring-black bg-transparent cursor-pointer;
 
         &:after {
             @apply block content-[""]
