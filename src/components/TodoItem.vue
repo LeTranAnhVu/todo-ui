@@ -14,7 +14,7 @@ const task = reactive({ ...toRefs(props).task.value })
 
 const subTasks = computed(() => task?.tasks.length || 0)
 const completedSubTasks = computed(() => task?.tasks.filter(task => task.isCompleted).length || 0)
-
+const allSubTasksCompleted = computed( () => subTasks.value === completedSubTasks.value)
 // Collapsing
 const isCollapsed = ref(false)
 const handleCollapseTask = () => {
@@ -32,7 +32,7 @@ const handleCollapseTask = () => {
             </div>
             <div class="right">
                 <div class="sub-task-action" @click="handleCollapseTask">
-                    <p v-if="subTasks">{{ completedSubTasks }}/{{ subTasks }} tasks</p>
+                    <p v-if="subTasks" :class="{'line-through': allSubTasksCompleted}">{{ completedSubTasks }}/{{ subTasks }} tasks</p>
                     <Icon
                         v-if="subTasks"
                         icon="fa-solid fa-angle-left"
