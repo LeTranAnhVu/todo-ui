@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import logoName from '@/assets/logo_name.svg'
-import NakedDangerBtn from '@/components/NakedDangerBtn.vue'
 import NavBar from '@/components/layout/NavBar.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 
@@ -17,7 +16,7 @@ const handleLogout = () => {
                 <img v-if="isAuthenticated" :src="user?.picture" alt="" class="h-10 w-10 rounded-full ring-black">
             </div>
             <div class="w-max">
-                <NakedDangerBtn @click="handleLogout">Sign out</NakedDangerBtn>
+                <Btn variant="danger-sim" @click="handleLogout">Sign out</Btn>
             </div>
         </div>
         <div class="logo mb-10">

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import PrimaryBtn from '@/components/PrimaryBtn.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import { ref } from 'vue'
 
@@ -14,9 +13,7 @@ const getToken = async () => {
 <template>
     <div class="max-w-[450px] mx-auto pt-5">
         <router-view></router-view>
-        
-        
-        <PrimaryBtn class="mt-10" @click="getToken">Get Access Token</PrimaryBtn>
+        <Btn variant="primary" class="mt-10" @click="getToken">Get Access Token</Btn>
         <code class="w-full">{{token}}</code>
     </div>
 </template>

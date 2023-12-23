@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import logo from '@/assets/todo_logo.svg'
-import PrimaryOutlineBtn from '@/components/PrimaryOutlineBtn.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 
 const { loginWithRedirect } = useAuth0()
@@ -18,7 +17,7 @@ const handleLogin = () => {
             <p class="text-slate-500">Build your target, get your dream</p>
         </div>
         <div class="w-full px-9">
-            <PrimaryOutlineBtn @click="handleLogin">Login</PrimaryOutlineBtn>
+            <Btn variant="primary-outline" @click="handleLogin">Login</Btn>
         </div>
     </div>
 </template>
