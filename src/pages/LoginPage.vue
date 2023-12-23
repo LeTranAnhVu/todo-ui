@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import logo from '@/assets/todo_logo.svg'
 import PrimaryOutlineBtn from '@/components/PrimaryOutlineBtn.vue'
-import { router } from '@/router.ts'
+import { useAuth0 } from '@auth0/auth0-vue'
 
+const { loginWithRedirect } = useAuth0()
 const handleLogin = () => {
-    router.push({name: 'home'})
+    loginWithRedirect()
 }
 </script>
+
 
 <template>
     <div class="h-screen flex flex-col items-center justify-center">

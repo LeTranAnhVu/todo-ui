@@ -2,17 +2,20 @@
 import logoName from '@/assets/logo_name.svg'
 import NakedDangerBtn from '@/components/NakedDangerBtn.vue'
 import NavBar from '@/components/layout/NavBar.vue'
-import { router } from '@/router.ts'
+import { useAuth0 } from '@auth0/auth0-vue'
 
+const { logout, isAuthenticated, user } = useAuth0()
 const handleLogout = () => {
-    router.push({ name: 'login' })
+    logout()
 }
 </script>
 
 <template>
     <div class="flex-col w-full">
-        <div class="header flex px-4">
-            <div class="buffer grow"></div>
+        <div class="header flex px-4 justify-between">
+            <div class="buffer">
+                <img v-if="isAuthenticated" :src="user?.picture" alt="" class="h-10 w-10 rounded-full ring-black">
+            </div>
             <div class="w-max">
                 <NakedDangerBtn @click="handleLogout">Sign out</NakedDangerBtn>
             </div>
