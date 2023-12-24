@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import PrimaryOutlineBtn from '@/components/PrimaryOutlineBtn.vue'
 import { router } from '@/router.ts'
 
 const backHome = () => {
@@ -15,7 +14,7 @@ const backHome = () => {
             <p class="text-slate-500">Please go back to Home.</p>
         </div>
         <div class="w-full px-9">
-            <PrimaryOutlineBtn @click="backHome">Home</PrimaryOutlineBtn>
+            <Btn variant="primary-outline"  @click="backHome">Home</Btn>
         </div>
     </div>
 </template>

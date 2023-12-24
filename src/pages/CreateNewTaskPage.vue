@@ -1,10 +1,7 @@
 <script setup lang="ts">
-
-import PrimaryBtn from '@/components/PrimaryBtn.vue'
 import { v4 as uuidv4 } from 'uuid'
 import Checkbox from '@/components/Checkbox.vue'
 import { reactive } from 'vue'
-import PrimaryOutlineBtn from '@/components/PrimaryOutlineBtn.vue'
 
 type CreateSubTask = {
     id?: string
@@ -110,11 +107,11 @@ const createTask = () => {
                 </div>
             </div>
 
-            <PrimaryOutlineBtn @click="addNewSubTask">Add new</PrimaryOutlineBtn>
+            <Btn variant="primary-outline" @click="addNewSubTask">Add new</Btn>
         </div>
         <div class="divide"></div>
         <div class="formActions">
-            <PrimaryBtn @click="createTask">Create</PrimaryBtn>
+            <Btn variant="primary" @click="createTask">Create</Btn>
         </div>
 
     </div>
