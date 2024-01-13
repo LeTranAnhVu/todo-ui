@@ -6,8 +6,9 @@ import { faUserSecret, faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from '@fortawesome/free-regular-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { router } from '@/router.ts'
-import { createAuth0 } from '@auth0/auth0-vue'
+import { Auth0VueClient, createAuth0 } from '@auth0/auth0-vue'
 import Btn from '@/components/Btn.vue'
+import createApiFetch from '@/lib/createApiFetch.ts'
 
 library.add(faUserSecret, faAngleLeft, faCircleXmark)
 
@@ -27,5 +28,16 @@ app.use(createAuth0({
         audience: import.meta.env.VITE_AUTH_AUD
     }
 }))
+
+const auth0 = app.config.globalProperties['$auth0'] as Auth0VueClient
+export const useApiFetch = createApiFetch(
+    import.meta.env.VITE_API_BASE_URL,
+    async () => {
+        return await auth0.getAccessTokenSilently()
+    },
+    async () => {
+        await auth0.logout()
+    }
+)
 
 app.mount('#app')
