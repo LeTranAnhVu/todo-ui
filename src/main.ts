@@ -24,7 +24,7 @@ app.use(createAuth0({
     cacheLocation: 'localstorage',
     authorizationParams: {
         redirect_uri: window.location.origin,
-        audience: import.meta.env.VITE_AUTH_AUD,
+        audience: import.meta.env.VITE_AUTH_AUD
     }
 }))
 

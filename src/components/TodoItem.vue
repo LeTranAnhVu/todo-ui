@@ -14,7 +14,7 @@ const task = reactive({ ...toRefs(props).task.value })
 
 const subTasks = computed(() => task?.tasks.length || 0)
 const completedSubTasks = computed(() => task?.tasks.filter(task => task.isCompleted).length || 0)
-const allSubTasksCompleted = computed( () => subTasks.value === completedSubTasks.value)
+const allSubTasksCompleted = computed(() => subTasks.value === completedSubTasks.value)
 // Collapsing
 const isCollapsed = ref(false)
 const handleCollapseTask = () => {
@@ -32,7 +32,8 @@ const handleCollapseTask = () => {
             </div>
             <div class="right">
                 <div class="sub-task-action" @click="handleCollapseTask">
-                    <p v-if="subTasks" :class="{'line-through': allSubTasksCompleted}">{{ completedSubTasks }}/{{ subTasks }} tasks</p>
+                    <p v-if="subTasks" :class="{'line-through': allSubTasksCompleted}">{{ completedSubTasks
+                        }}/{{ subTasks }} tasks</p>
                     <Icon
                         v-if="subTasks"
                         icon="fa-solid fa-angle-left"
@@ -44,7 +45,10 @@ const handleCollapseTask = () => {
         <div class="collapsed">
             <!--  sub tasks -->
             <ul v-if="task.tasks.length && isCollapsed" class="sub-tasks">
-                <li v-for="subTask in task.tasks" :key="`${task.name}-${subTask.name}`" class="task"
+                <li
+                    v-for="subTask in task.tasks"
+                    :key="`${task.name}-${subTask.name}`"
+                    class="task"
                     :data-completed="subTask.isCompleted">
                     <div class="main">
                         <div class="left">
@@ -81,7 +85,7 @@ const handleCollapseTask = () => {
 
             .sub-task-action {
                 @apply flex flex-nowrap gap-2 items-center cursor-pointer;
-                
+
                 .collapsed-icon {
                     @apply transition-all duration-200 ease-in-out;
                 }

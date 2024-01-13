@@ -17,7 +17,7 @@ const input = ref<HTMLInputElement | null>(null)
 const handleClick = async () => {
     const el = input.value
     if (el) {
-        el.value = el.value === 'true' ? 'false': 'true'
+        el.value = el.value === 'true' ? 'false' : 'true'
         el.dispatchEvent(new Event('input'))
     }
 }
@@ -27,8 +27,11 @@ const handleClick = async () => {
     <div class="checkbox" :data-checked="modelValue">
         <span v-if="label">{{ label }}</span>
         <div class="input-wrapper" @click="handleClick">
-            <input ref="input" :value="modelValue" type="checkbox"
-                   @input="$emit('update:modelValue',  formatBoolean(($event.target as HTMLInputElement).value))">
+            <input
+                ref="input"
+                :value="modelValue"
+                type="checkbox"
+                @input="$emit('update:modelValue',  formatBoolean(($event.target as HTMLInputElement).value))">
         </div>
     </div>
 </template>

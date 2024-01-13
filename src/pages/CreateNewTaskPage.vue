@@ -6,7 +6,7 @@ import { reactive } from 'vue'
 type CreateSubTask = {
     id?: string
     isRepeated: boolean
-    name: string 
+    name: string
 }
 
 type CreateNewTask = CreateSubTask & {
@@ -15,14 +15,14 @@ type CreateNewTask = CreateSubTask & {
 const taskForm = reactive<CreateNewTask>({
     name: '',
     isRepeated: false,
-    tasks: [],
+    tasks: []
 })
 
 const addNewSubTask = () => {
     taskForm.tasks.push({
         id: `TMP_${uuidv4()}`,
         name: '',
-        isRepeated: false,
+        isRepeated: false
     })
 }
 
@@ -31,7 +31,7 @@ const deleteSubTask = (id?: string) => {
     taskForm.tasks.splice(idx, 1)
 }
 
-const formErrors = reactive<{name: [boolean, string], tasks: Record<string, [boolean, string]>}>({
+const formErrors = reactive<{ name: [boolean, string], tasks: Record<string, [boolean, string]> }>({
     name: [false, ''],
     tasks: {}
 })
@@ -52,7 +52,7 @@ const validate = (): boolean => {
             formErrors.tasks[subTask?.id || 'unknown'] = [true, 'Required']
             isvalid = false
         } else {
-            formErrors.tasks[subTask?.id || 'unknown']  = [false, '']
+            formErrors.tasks[subTask?.id || 'unknown'] = [false, '']
         }
     }
 
@@ -102,8 +102,11 @@ const createTask = () => {
                         v-model="subTask.isRepeated"
                         label="Repeat daily:" />
 
-                    <Icon icon="fa-regular fa-circle-xmark" size="lg" class="closeIcon"
-                          @click="deleteSubTask(subTask?.id)" />
+                    <Icon
+                        icon="fa-regular fa-circle-xmark"
+                        size="lg"
+                        class="closeIcon"
+                        @click="deleteSubTask(subTask?.id)" />
                 </div>
             </div>
 
