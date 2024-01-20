@@ -2,65 +2,80 @@
 import { v4 as uuidv4 } from 'uuid'
 import Checkbox from '@/components/Checkbox.vue'
 import { reactive } from 'vue'
+import { CreateTodoDto, useTodosStore } from '@/lib/stores/useTodosStore.ts'
+import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
 
-type CreateSubTask = {
+type CreateTodoForm =  {
     id?: string
     isRepeated: boolean
     name: string
+    subTodos: Omit<CreateTodoForm, 'subTodos'>[]
 }
 
-type CreateNewTask = CreateSubTask & {
-    tasks: CreateSubTask[]
-}
-const taskForm = reactive<CreateNewTask>({
+const createTodoForm = reactive<CreateTodoForm>({
     name: '',
     isRepeated: false,
-    tasks: []
+    subTodos: []
 })
 
-const addNewSubTask = () => {
-    taskForm.tasks.push({
+const addNewSubTodo = () => {
+    createTodoForm.subTodos.push({
         id: `TMP_${uuidv4()}`,
         name: '',
         isRepeated: false
     })
 }
 
-const deleteSubTask = (id?: string) => {
-    const idx = taskForm.tasks.findIndex(t => t.id === id)
-    taskForm.tasks.splice(idx, 1)
+const deleteSubTodo = (id?: string) => {
+    const idx = createTodoForm.subTodos.findIndex(t => t.id === id)
+    createTodoForm.subTodos.splice(idx, 1)
 }
 
-const formErrors = reactive<{ name: [boolean, string], tasks: Record<string, [boolean, string]> }>({
+const formErrors = reactive<{ name: [boolean, string], subTodos: Record<string, [boolean, string]> }>({
     name: [false, ''],
-    tasks: {}
+    subTodos: {}
 })
 
 const validate = (): boolean => {
-    let isvalid = true
+    let isValid = true
     // Name is required
-    if (!taskForm.name) {
+    if (!createTodoForm.name) {
         formErrors.name = [true, 'Required']
-        isvalid = false
+        isValid = false
     } else {
         formErrors.name = [false, '']
     }
 
     // subtasks name are required
-    for (const subTask of taskForm.tasks) {
-        if (!subTask.name) {
-            formErrors.tasks[subTask?.id || 'unknown'] = [true, 'Required']
-            isvalid = false
+    for (const subTodo of createTodoForm.subTodos) {
+        if (!subTodo.name) {
+            formErrors.subTodos[subTodo?.id || 'unknown'] = [true, 'Required']
+            isValid = false
         } else {
-            formErrors.tasks[subTask?.id || 'unknown'] = [false, '']
+            formErrors.subTodos[subTodo?.id || 'unknown'] = [false, '']
         }
     }
 
-    return isvalid
+    return isValid
 }
-const createTask = () => {
+const createTodo = async () => {
     if (validate()) {
-        console.log('submitted', taskForm)
+        const mapSubTodo = (form: Omit<CreateTodoForm, 'subTodos'>): Omit<CreateTodoDto, 'subTodos'> => {
+            return {
+                name: form.name,
+                RepeatableType: form.isRepeated ? RepeatableType.Daily : RepeatableType.Once
+            }
+        }
+        
+        const dto: CreateTodoDto = {
+            name : createTodoForm.name,
+            subTodos : createTodoForm.subTodos.map(mapSubTodo),
+            RepeatableType : createTodoForm.isRepeated ? RepeatableType.Daily : RepeatableType.Once
+        }
+        
+        console.log('submitted', dto)
+        const todoStore = useTodosStore()
+        await todoStore.createTodo(dto)
     }
 }
 </script>
@@ -71,14 +86,14 @@ const createTask = () => {
             <h2 class="text-lg mb-3">Task</h2>
             <div class="card">
                 <div class="inputField">
-                    <input v-model="taskForm.name" type="text" class="input-text" :data-invalid="formErrors.name[0]">
+                    <input v-model="createTodoForm.name" type="text" class="input-text" :data-invalid="formErrors.name[0]">
                     <span
                         v-if="formErrors.name[1]"
                         class="errorMessage">
                     {{ formErrors.name[1] }} </span>
                 </div>
                 <Checkbox
-                    v-model="taskForm.isRepeated"
+                    v-model="createTodoForm.isRepeated"
                     label="Repeat daily:" />
                 <!--    <PrimaryBtn>Click me</PrimaryBtn>-->
                 <!--    <SecondaryBtn>Cancel</SecondaryBtn>-->
@@ -87,34 +102,34 @@ const createTask = () => {
 
         <div class="subTasks">
             <h2 class="text-lg mb-3">Sub tasks</h2>
-            <div v-for="subTask in taskForm.tasks" :key="subTask.id" class="task mb-4">
+            <div v-for="subTodo in createTodoForm.subTodos" :key="subTodo.id" class="task mb-4">
                 <div class="card">
                     <div class="inputField">
                         <input
-                            v-model="subTask.name" type="text" class="input-text"
-                            :data-invalid="!!(formErrors.tasks[subTask?.id || 'unknown']?.[0])">
+                            v-model="subTodo.name" type="text" class="input-text"
+                            :data-invalid="!!(formErrors.subTodos[subTodo?.id || 'unknown']?.[0])">
                         <span
-                            v-if="formErrors.tasks[subTask?.id || 'unknown']?.[1]"
+                            v-if="formErrors.subTodos[subTodo?.id || 'unknown']?.[1]"
                             class="errorMessage">
-                    {{ formErrors.tasks[subTask?.id || 'unknown']?.[1] }} </span>
+                    {{ formErrors.subTodos[subTodo?.id || 'unknown']?.[1] }} </span>
                     </div>
                     <Checkbox
-                        v-model="subTask.isRepeated"
+                        v-model="subTodo.isRepeated"
                         label="Repeat daily:" />
 
                     <Icon
                         icon="fa-regular fa-circle-xmark"
                         size="lg"
                         class="closeIcon"
-                        @click="deleteSubTask(subTask?.id)" />
+                        @click="deleteSubTodo(subTodo?.id)" />
                 </div>
             </div>
 
-            <Btn variant="primary-outline" @click="addNewSubTask">Add new</Btn>
+            <Btn variant="primary-outline" @click="addNewSubTodo">Add new</Btn>
         </div>
         <div class="divide"></div>
         <div class="formActions">
-            <Btn variant="primary" @click="createTask">Create</Btn>
+            <Btn variant="primary" @click="createTodo">Create</Btn>
         </div>
 
     </div>

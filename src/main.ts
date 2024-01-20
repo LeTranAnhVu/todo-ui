@@ -9,6 +9,7 @@ import { router } from '@/router.ts'
 import { Auth0VueClient, createAuth0 } from '@auth0/auth0-vue'
 import Btn from '@/components/Btn.vue'
 import createApiFetch from '@/lib/createApiFetch.ts'
+import { createPinia } from 'pinia'
 
 library.add(faUserSecret, faAngleLeft, faCircleXmark)
 
@@ -39,5 +40,8 @@ export const useApiFetch = createApiFetch(
         await auth0.logout()
     }
 )
+
+const pinia = createPinia()
+app.use(pinia)
 
 app.mount('#app')
