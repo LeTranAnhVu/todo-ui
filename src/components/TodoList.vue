@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import TodoItem from '@/components/TodoItem.vue'
-import type { TodoTask } from '@/lib/types/TodoTask.ts'
 import { computed, toRefs } from 'vue'
 import { DateTime } from 'luxon'
+import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
 
 type Props = {
-    tasks: TodoTask[]
     date: Date
 }
 
 const props = defineProps<Props>()
 
-const { date, tasks } = toRefs(props)
+const { date } = toRefs(props)
 const luxonDt = computed(() => DateTime.fromJSDate(date.value))
 const relativeDay = computed(() => {
     let str = luxonDt.value.toRelativeCalendar()
@@ -23,6 +22,9 @@ const relativeDay = computed(() => {
     return str
 })
 const displayDay = computed(() => luxonDt.value.toFormat('d LLL yy'))
+
+const todos = useTodosStore().todos
+
 </script>
 
 <template>
@@ -34,7 +36,7 @@ const displayDay = computed(() => luxonDt.value.toFormat('d LLL yy'))
             </p>
         </div>
         <div class="todos">
-            <TodoItem v-for="task in tasks" :key="task.name" :task="task" />
+            <TodoItem v-for="todo in todos" :key="todo.id" :date="date" :todo="todo" />
         </div>
     </div>
 </template>

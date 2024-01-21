@@ -1,41 +1,60 @@
 <script setup lang="ts">
-import type { TodoTask } from '@/lib/types/TodoTask.ts'
-import { computed, reactive, ref, toRefs } from 'vue'
+import { computed, ref, toRefs } from 'vue'
 import Checkbox from '@/components/Checkbox.vue'
+import { TodoDto } from '@/lib/types/TodoDto.ts'
+import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
+import { DisplayedTodoStatusDto } from '@/lib/types/DisplayedTodoStatusDto.ts'
 
 type Props = {
-    task: TodoTask
+    todo: TodoDto
+    date: Date
 }
 
 const props = defineProps<Props>()
+const { todo, date } = toRefs<Props>(props)
+const todoStatusStore = useTodoStatusesStore()
+const todoStatus = computed<DisplayedTodoStatusDto | null>(() => todoStatusStore.getTodoStatusByDay(todo.value, date.value))
+const subTodoStatuses = computed<DisplayedTodoStatusDto[]>(() => todo.value.subTodos
+    .map(std => todoStatusStore.getTodoStatusByDay(std, date.value))
+    .filter((stds): stds is DisplayedTodoStatusDto => stds !== null))
 
-// TODO we can refactor this to computed and new value is set to state management
-const task = reactive({ ...toRefs(props).task.value })
+const completedSubTodos = computed(() => subTodoStatuses.value.filter(stds => stds.isCompleted))
+const allSubTodosCompleted = computed(() => subTodoStatuses.value.length === completedSubTodos.value.length)
 
-const subTasks = computed(() => task?.tasks.length || 0)
-const completedSubTasks = computed(() => task?.tasks.filter(task => task.isCompleted).length || 0)
-const allSubTasksCompleted = computed(() => subTasks.value === completedSubTasks.value)
+
 // Collapsing
 const isCollapsed = ref(false)
 const handleCollapseTask = () => {
     isCollapsed.value = !isCollapsed.value
 }
 
+const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: boolean) => {
+    await todoStatusStore.createTodoStatus({
+        todoId: todoStatus!.todoId,
+        isCompleted: newVal,
+        occurredAt: todoStatus!.occurredAt
+    })
+}
+
 </script>
 
 <template>
-    <div class="task" :data-collapsed="isCollapsed" :data-completed="task.isCompleted">
+    <div v-if="todoStatus" class="task" :data-collapsed="isCollapsed" :data-completed="todoStatus.isCompleted">
         <div class="main">
             <div class="left">
-                <Checkbox v-model="task.isCompleted" />
-                <p class="name">{{ task?.name }}</p>
+                <Checkbox
+                    :model-value="todoStatus.isCompleted"
+                    @update:model-value="(newVal: boolean) => updateStatus(todoStatus, newVal)"
+                />
+                <p class="name">{{ todoStatus.todoName }}</p>
             </div>
             <div class="right">
                 <div class="sub-task-action" @click="handleCollapseTask">
-                    <p v-if="subTasks" :class="{'line-through': allSubTasksCompleted}">{{ completedSubTasks
-                        }}/{{ subTasks }} tasks</p>
+                    <p v-if="subTodoStatuses" :class="{'line-through': allSubTodosCompleted}">
+                        {{ completedSubTodos.length
+                        }}/{{ subTodoStatuses.length }} tasks</p>
                     <Icon
-                        v-if="subTasks"
+                        v-if="subTodoStatuses.length"
                         icon="fa-solid fa-angle-left"
                         class="collapsed-icon"
                     ></Icon>
@@ -44,16 +63,20 @@ const handleCollapseTask = () => {
         </div>
         <div class="collapsed">
             <!--  sub tasks -->
-            <ul v-if="task.tasks.length && isCollapsed" class="sub-tasks">
+            <ul v-if="isCollapsed && subTodoStatuses.length" class="sub-tasks">
                 <li
-                    v-for="subTask in task.tasks"
-                    :key="`${task.name}-${subTask.name}`"
+                    v-for="subTodoStatus in subTodoStatuses"
+                    :key="subTodoStatus.todoId"
                     class="task"
-                    :data-completed="subTask.isCompleted">
+                    :data-completed="subTodoStatus.isCompleted">
                     <div class="main">
                         <div class="left">
-                            <Checkbox v-model="subTask.isCompleted" />
-                            <p class="name">{{ subTask.name }}</p>
+                            <Checkbox
+                                :model-value="subTodoStatus.isCompleted"
+                                @update:model-value="(newVal: boolean) => updateStatus(subTodoStatus, newVal)"
+                            />
+
+                            <p class="name">{{ subTodoStatus.todoName }}</p>
                         </div>
                         <div class="right">
                             <!-- nothing here -->

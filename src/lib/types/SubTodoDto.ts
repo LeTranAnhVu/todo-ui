@@ -1,11 +1,5 @@
-import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
+import { TodoDto } from '@/lib/types/TodoDto.ts'
 
-export type SubTodoDto = {
-    id: string
-    name: string
+export type SubTodoDto = Omit<TodoDto, 'subTodos'> & {
     parentId: string
-    repeatableType: RepeatableType
-    repeatableStartedAt?: Date
-    createdAt: Date
-    updatedAt?: Date
 }
