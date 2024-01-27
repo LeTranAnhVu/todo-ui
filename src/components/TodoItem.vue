@@ -49,10 +49,9 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
                 <p class="name">{{ todoStatus.todoName }}</p>
             </div>
             <div class="right">
-                <div class="sub-todo-action" @click="handleCollapseTask">
+                <div v-if="subTodoStatuses.length" class="sub-todo-action" @click="handleCollapseTask">
                     <p v-if="subTodoStatuses" :class="{'line-through': allSubTodosCompleted}">
-                        {{ completedSubTodos.length
-                        }}/{{ subTodoStatuses.length }} tasks</p>
+                        {{ completedSubTodos.length }}/{{ subTodoStatuses.length }} tasks</p>
                     <Icon
                         v-if="subTodoStatuses.length"
                         icon="fa-solid fa-angle-left"

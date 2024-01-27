@@ -7,6 +7,7 @@ import { DisplayedTodoStatusDto } from '@/lib/types/DisplayedTodoStatusDto.ts'
 import { TodoDto } from '@/lib/types/TodoDto.ts'
 import { SubTodoDto } from '@/lib/types/SubTodoDto.ts'
 import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
+import { isAfterDay } from '@/lib/helpers/isAfterDay.ts'
 
 export type CreateTodoStatusDto = {
     todoId: string
@@ -28,10 +29,8 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
     const todoStatuses = ref<TodoStatusDto[]>([])
 
     function getTodoStatusByDay(todo: TodoDto | SubTodoDto, day: Date): DisplayedTodoStatusDto | null {
-        if (todo.startedAt.getUTCFullYear() > day.getUTCFullYear()
-            && todo.startedAt.getUTCMonth() > day.getUTCMonth()
-            && todo.startedAt.getUTCDate() > day.getUTCDate()) {
-            // If the todo is available later than the given day, return null
+        // If the todo is available later than the given day, return null
+        if (isAfterDay(todo.startedAt, day) > 0) {
             return null
         }
 
