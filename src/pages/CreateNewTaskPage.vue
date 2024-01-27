@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid'
 import Checkbox from '@/components/Checkbox.vue'
-import { reactive } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { CreateTodoDto, useTodosStore } from '@/lib/stores/useTodosStore.ts'
 import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
 
-type CreateTodoForm =  {
+type CreateTodoForm = {
     id?: string
     isRepeated: boolean
     name: string
@@ -17,12 +17,16 @@ const createTodoForm = reactive<CreateTodoForm>({
     isRepeated: false,
     subTodos: []
 })
+const recentTodoRepeatType = ref<boolean>(createTodoForm.isRepeated)
+watch(() => createTodoForm.isRepeated, (newVal) => {
+    recentTodoRepeatType.value = newVal
+})
 
 const addNewSubTodo = () => {
     createTodoForm.subTodos.push({
         id: `TMP_${uuidv4()}`,
         name: '',
-        isRepeated: false
+        isRepeated: recentTodoRepeatType.value
     })
 }
 
@@ -66,13 +70,13 @@ const createTodo = async () => {
                 RepeatableType: form.isRepeated ? RepeatableType.Daily : RepeatableType.Once
             }
         }
-        
+
         const dto: CreateTodoDto = {
-            name : createTodoForm.name,
-            subTodos : createTodoForm.subTodos.map(mapSubTodo),
-            RepeatableType : createTodoForm.isRepeated ? RepeatableType.Daily : RepeatableType.Once
+            name: createTodoForm.name,
+            subTodos: createTodoForm.subTodos.map(mapSubTodo),
+            RepeatableType: createTodoForm.isRepeated ? RepeatableType.Daily : RepeatableType.Once
         }
-        
+
         const todoStore = useTodosStore()
         await todoStore.createTodo(dto)
     }
@@ -85,7 +89,11 @@ const createTodo = async () => {
             <h2 class="text-lg mb-3">Task</h2>
             <div class="card">
                 <div class="inputField">
-                    <input v-model="createTodoForm.name" type="text" class="input-text" :data-invalid="formErrors.name[0]">
+                    <input
+                        v-model="createTodoForm.name"
+                        type="text"
+                        class="input-text"
+                        :data-invalid="formErrors.name[0]">
                     <span
                         v-if="formErrors.name[1]"
                         class="errorMessage">
@@ -103,7 +111,9 @@ const createTodo = async () => {
                 <div class="card">
                     <div class="inputField">
                         <input
-                            v-model="subTodo.name" type="text" class="input-text"
+                            v-model="subTodo.name"
+                            type="text"
+                            class="input-text"
                             :data-invalid="!!(formErrors.subTodos[subTodo?.id || 'unknown']?.[0])">
                         <span
                             v-if="formErrors.subTodos[subTodo?.id || 'unknown']?.[1]"
