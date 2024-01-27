@@ -16,7 +16,7 @@ const handleLogout = () => {
                 <img v-if="isAuthenticated" :src="user?.picture" alt="" class="h-10 w-10 rounded-full ring-black">
             </div>
             <div class="w-max">
-                <Btn variant="danger-sim" @click="handleLogout">Sign out</Btn>
+                <Btn variant="link" @click="handleLogout">Sign out</Btn>
             </div>
         </div>
         <div class="logo mb-10">

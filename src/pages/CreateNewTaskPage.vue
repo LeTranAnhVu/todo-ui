@@ -73,7 +73,6 @@ const createTodo = async () => {
             RepeatableType : createTodoForm.isRepeated ? RepeatableType.Daily : RepeatableType.Once
         }
         
-        console.log('submitted', dto)
         const todoStore = useTodosStore()
         await todoStore.createTodo(dto)
     }
@@ -95,8 +94,6 @@ const createTodo = async () => {
                 <Checkbox
                     v-model="createTodoForm.isRepeated"
                     label="Repeat daily:" />
-                <!--    <PrimaryBtn>Click me</PrimaryBtn>-->
-                <!--    <SecondaryBtn>Cancel</SecondaryBtn>-->
             </div>
         </div>
 
@@ -143,7 +140,7 @@ const createTodo = async () => {
     relative p-4;
 
     .closeIcon {
-        @apply text-red-400
+        @apply text-black
         cursor-pointer
         absolute top-[-10px] right-[-10px] bg-white;
     }

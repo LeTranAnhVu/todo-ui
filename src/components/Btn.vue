@@ -2,11 +2,11 @@
 import { toRefs } from 'vue'
 
 type BtnProps = {
-    variant: 'primary' | 'secondary' | 'danger-sim' | 'primary-outline'
-} 
+    variant: 'primary' | 'secondary' | 'danger-sim' | 'primary-outline' | 'link'
+}
 
 const props = defineProps<BtnProps>()
-const {variant} = toRefs(props)
+const { variant } = toRefs(props)
 </script>
 
 <template>
@@ -18,7 +18,7 @@ const {variant} = toRefs(props)
 <style scoped>
 .btn {
     @apply text-base w-full py-2 rounded;
-    
+
     &[data-variant='primary'] {
         @apply text-white bg-black font-semibold
         hover:bg-gray-900
@@ -32,16 +32,25 @@ const {variant} = toRefs(props)
     }
 
     &[data-variant='primary-outline'] {
-        @apply 
+        @apply
         ring-black ring-2
         font-semibold text-black
         hover:bg-black hover:text-white
         active:bg-black active:text-white;
     }
 
+    &[data-variant='link'] {
+        @apply
+        text-black
+        font-semibold
+        hover:font-bold
+        hover:underline
+        active:font-bold;
+    }
+
     &[data-variant='danger-sim'] {
         @apply
-        text-red-500 
+        text-red-500
         hover:font-semibold
         active:font-semibold;
     }
