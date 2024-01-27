@@ -20,7 +20,7 @@ function mapSubTodo(subTodo: SubTodoDto): SubTodoDto {
         ...subTodo,
         createdAt: new Date(subTodo.createdAt),
         updatedAt: subTodo.updatedAt ? new Date(subTodo.updatedAt) : subTodo.updatedAt,
-        repeatableStartedAt: new Date(subTodo.repeatableStartedAt)
+        startedAt: new Date(subTodo.startedAt)
     }
 }
 
@@ -31,7 +31,7 @@ function mapTodo(todo: TodoDto): TodoDto {
         subTodos: subTodos,
         createdAt: new Date(todo.createdAt),
         updatedAt: todo.updatedAt ? new Date(todo.updatedAt) : todo.updatedAt,
-        repeatableStartedAt: new Date(todo.repeatableStartedAt)
+        startedAt: new Date(todo.startedAt)
     }
 }
 

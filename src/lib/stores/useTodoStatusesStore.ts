@@ -28,7 +28,7 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
     const todoStatuses = ref<TodoStatusDto[]>([])
 
     function getTodoStatusByDay(todo: TodoDto | SubTodoDto, day: Date): DisplayedTodoStatusDto | null {
-        if (todo.repeatableStartedAt > day) {
+        if (todo.startedAt > day) {
             // If the todo is available later than the given day, return null
             return null
         }
@@ -53,7 +53,7 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
         }
 
         if (todo.repeatableType === RepeatableType.Once
-            && !isSameDay(todo.repeatableStartedAt, day)) {
+            && !isSameDay(todo.startedAt, day)) {
             // don't return status if it is once time and the day is not the repeatable started at
             return null
         }
