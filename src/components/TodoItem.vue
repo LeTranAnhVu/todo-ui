@@ -67,7 +67,7 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
                 <li
                     v-for="subTodoStatus in subTodoStatuses"
                     :key="subTodoStatus.todoId"
-                    class="todo"
+                    class="sub-todo"
                     :data-completed="subTodoStatus.isCompleted">
                     <div class="main">
                         <div class="left">
@@ -119,10 +119,6 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
     .collapsed {
         @apply h-0 invisible
         transition-all duration-200 ease-in-out;
-
-        .sub-todos {
-            @apply flex flex-col gap-3;
-        }
     }
 
     &[data-collapsed=true] {
@@ -137,10 +133,24 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
         }
     }
 
+
+}
+
+.sub-todos {
+    @apply flex flex-col gap-3 pl-3;
+    .sub-todo {
+        @apply
+        pb-3
+        border-b last:border-b-0;
+    }
+}
+
+.todo, .sub-todo {
     &[data-completed="true"] {
         & > .main .left .name {
             @apply line-through;
         }
     }
 }
+
 </style>
