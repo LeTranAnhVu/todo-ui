@@ -39,7 +39,7 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
 </script>
 
 <template>
-    <div v-if="todoStatus" class="task" :data-collapsed="isCollapsed" :data-completed="todoStatus.isCompleted">
+    <div v-if="todoStatus" class="todo" :data-collapsed="isCollapsed" :data-completed="todoStatus.isCompleted">
         <div class="main">
             <div class="left">
                 <Checkbox
@@ -49,7 +49,7 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
                 <p class="name">{{ todoStatus.todoName }}</p>
             </div>
             <div class="right">
-                <div class="sub-task-action" @click="handleCollapseTask">
+                <div class="sub-todo-action" @click="handleCollapseTask">
                     <p v-if="subTodoStatuses" :class="{'line-through': allSubTodosCompleted}">
                         {{ completedSubTodos.length
                         }}/{{ subTodoStatuses.length }} tasks</p>
@@ -63,11 +63,11 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
         </div>
         <div class="collapsed">
             <!--  sub tasks -->
-            <ul v-if="isCollapsed && subTodoStatuses.length" class="sub-tasks">
+            <ul v-if="isCollapsed && subTodoStatuses.length" class="sub-todos">
                 <li
                     v-for="subTodoStatus in subTodoStatuses"
                     :key="subTodoStatus.todoId"
-                    class="task"
+                    class="todo"
                     :data-completed="subTodoStatus.isCompleted">
                     <div class="main">
                         <div class="left">
@@ -89,7 +89,7 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
 </template>
 
 <style scoped lang="scss">
-.task {
+.todo {
     @apply flex flex-col
     rounded-lg ring-black ring-1
     relative
@@ -106,7 +106,7 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
         .right {
             @apply flex flex-nowrap gap-2 items-center;
 
-            .sub-task-action {
+            .sub-todo-action {
                 @apply flex flex-nowrap gap-2 items-center cursor-pointer;
 
                 .collapsed-icon {
@@ -120,7 +120,7 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
         @apply h-0 invisible
         transition-all duration-200 ease-in-out;
 
-        .sub-tasks {
+        .sub-todos {
             @apply flex flex-col gap-3;
         }
     }
