@@ -7,6 +7,7 @@ export type TodoDto = {
     subTodos: SubTodoDto[]
     repeatableType: RepeatableType
     startedAt: Date
+    endedAt: Date | null
     createdAt: Date
     updatedAt: Date | null
 }

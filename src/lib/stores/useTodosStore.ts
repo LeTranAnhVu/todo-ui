@@ -8,7 +8,9 @@ import { SubTodoDto } from '@/lib/types/SubTodoDto.ts'
 export type CreateTodoDto = {
     name: string
     subTodos: Omit<CreateTodoDto, 'subTodos'>[] | null
-    RepeatableType: RepeatableType | null
+    repeatableType: RepeatableType | null
+    startedAt: Date | null
+    endedAt: Date | null
 }
 
 export type UpdateTodoDto = {
