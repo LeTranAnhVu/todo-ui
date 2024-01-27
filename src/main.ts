@@ -10,6 +10,7 @@ import { Auth0VueClient, createAuth0 } from '@auth0/auth0-vue'
 import Btn from '@/components/Btn.vue'
 import createApiFetch from '@/lib/createApiFetch.ts'
 import { createPinia } from 'pinia'
+import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 
 library.add(faUserSecret, faAngleLeft, faCircleXmark)
 
@@ -44,4 +45,5 @@ export const useApiFetch = createApiFetch(
 const pinia = createPinia()
 app.use(pinia)
 
+app.use(VueTailwindDatepicker)
 app.mount('#app')
