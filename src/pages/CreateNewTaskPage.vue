@@ -7,6 +7,7 @@ import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
 import dayjs from 'dayjs'
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 import Btn from '@/components/Btn.vue'
+import { parseUTCDate } from '@/lib/helpers/parseUTCDate.ts'
 
 type CreateTodoForm = {
     id?: string
@@ -31,10 +32,6 @@ const handleSetEndDate = () => {
 }
 
 const dateFormat = 'DD MMM YYYY'
-const parseUTCDate = (dateAsStr: string): Date => {
-    const dayjsDate = dayjs(dateAsStr)
-    return new Date(Date.UTC(dayjsDate.get('year'), dayjsDate.get('month'), dayjsDate.get('date')))
-}
 const startDate = ref<string[]>([dayjs().format(dateFormat)])
 const endDate = ref<string[]>([])
 const dateFormatter = {

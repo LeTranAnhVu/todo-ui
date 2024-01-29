@@ -29,8 +29,10 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
     const todoStatuses = ref<TodoStatusDto[]>([])
 
     function getTodoStatusByDay(todo: TodoDto | SubTodoDto, day: Date): DisplayedTodoStatusDto | null {
-        // If the todo is available later than the given day, return null
-        if (isAfterDay(todo.startedAt, day) > 0) {
+        // If the todo is available later than the given day,
+        //  Or the end day is over 
+        //  return null
+        if (isAfterDay(todo.startedAt, day) || (todo.endedAt && isAfterDay(day, todo.endedAt))) {
             return null
         }
 

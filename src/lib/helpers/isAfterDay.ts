@@ -1,4 +1,4 @@
-export function isAfterDay(day1: Date, day2: Date): number {
+export function isAfterDay(day1: Date, day2: Date): boolean {
     let sum = 0
 
     if (day1.getFullYear() > day2.getFullYear()) {
@@ -25,5 +25,5 @@ export function isAfterDay(day1: Date, day2: Date): number {
         sum = 0
     }
 
-    return sum
+    return sum > 0
 }

@@ -2,9 +2,10 @@
 import TodoList from '@/components/TodoList.vue'
 import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
 import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { addDays } from '@/lib/helpers/addDays.ts'
 import Spinner from '@/components/Spinner.vue'
+import { parseUTCDate } from '@/lib/helpers/parseUTCDate.ts'
 
 const todosStore = useTodosStore()
 const todoStatusesStore = useTodoStatusesStore()
@@ -18,6 +19,12 @@ onMounted(async () => {
     isLoading.value = false
 })
 
+const displayedDates = computed<Date[]>(() => {
+    // TODO find good way to handle utc
+    const today =  parseUTCDate(new Date().toUTCString())
+    return [...[3, 2, 1].map(offset => addDays(today, offset)), today, ...[-1, -2, -3].map(offset => addDays(today, offset))]
+})
+
 </script>
 
 <template>
@@ -28,9 +35,7 @@ onMounted(async () => {
             </div>
         </template>
         <template v-else>
-            <TodoList :date="addDays(new Date(), 1)"></TodoList>
-            <TodoList :date="new Date()"></TodoList>
-            <TodoList :date="new Date(2023, 11, 15)"></TodoList>
+            <TodoList v-for="date in displayedDates" :key="date.toUTCString()" :date="date"></TodoList>
         </template>
     </div>
 </template>

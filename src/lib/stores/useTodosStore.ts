@@ -22,7 +22,8 @@ function mapSubTodo(subTodo: SubTodoDto): SubTodoDto {
         ...subTodo,
         createdAt: new Date(subTodo.createdAt),
         updatedAt: subTodo.updatedAt ? new Date(subTodo.updatedAt) : subTodo.updatedAt,
-        startedAt: new Date(subTodo.startedAt)
+        startedAt: new Date(subTodo.startedAt),
+        endedAt: subTodo.endedAt ? new Date(subTodo.endedAt) : subTodo.endedAt
     }
 }
 
@@ -33,7 +34,8 @@ function mapTodo(todo: TodoDto): TodoDto {
         subTodos: subTodos,
         createdAt: new Date(todo.createdAt),
         updatedAt: todo.updatedAt ? new Date(todo.updatedAt) : todo.updatedAt,
-        startedAt: new Date(todo.startedAt)
+        startedAt: new Date(todo.startedAt),
+        endedAt: todo.endedAt ? new Date(todo.endedAt) : todo.endedAt
     }
 }
 
