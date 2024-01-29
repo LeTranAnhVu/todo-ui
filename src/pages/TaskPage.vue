@@ -1,36 +1,60 @@
 <script setup lang="ts">
-import TodoList from '@/components/TodoList.vue'
-import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
-import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
-import { onMounted, ref } from 'vue'
-import { addDays } from '@/lib/helpers/addDays.ts'
-import Spinner from '@/components/Spinner.vue'
-
-const todosStore = useTodosStore()
-const todoStatusesStore = useTodoStatusesStore()
-
-const isLoading = ref(false)
-
-onMounted(async () => {
-    isLoading.value = true
-    await todosStore.fetchTodos()
-    await todoStatusesStore.fetchTodoStatuses()
-    isLoading.value = false
-})
 
 </script>
 
 <template>
-    <div class="flex flex-col gap-10">
-        <template v-if="isLoading">
-            <div class="mx-auto mt-10">
-                <Spinner />
-            </div>
-        </template>
-        <template v-else>
-            <TodoList :date="addDays(new Date(), 1)"></TodoList>
-            <TodoList :date="new Date()"></TodoList>
-            <TodoList :date="new Date(2023, 11, 15)"></TodoList>
-        </template>
-    </div>
+    <table class="border-collapse table-fixed w-full text-sm">
+        <thead>
+        <tr>
+            <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
+                Song
+            </th>
+            <th class="border-b dark:border-slate-600 font-medium p-4 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
+                Artist
+            </th>
+            <th class="border-b dark:border-slate-600 font-medium p-4 pr-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
+                Year
+            </th>
+        </tr>
+        </thead>
+        <tbody class="bg-white dark:bg-slate-800">
+        <tr>
+            <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
+                The Sliding 
+            </td>
+            <td class="border-b border-slate-100 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">Malcolm
+                Lockyer
+            </td>
+            <td class="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">
+                1961
+            </td>
+        </tr>
+        <tr>
+            <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
+                Witchy Woman
+            </td>
+            <td class="border-b border-slate-100 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">The
+                Eagles
+            </td>
+            <td class="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">
+                1972
+            </td>
+        </tr>
+        <tr>
+            <td class="border-b border-slate-200 dark:border-slate-600 p-4 pl-8 text-slate-500 dark:text-slate-400">
+                Shining Star
+            </td>
+            <td class="border-b border-slate-200 dark:border-slate-600 p-4 text-slate-500 dark:text-slate-400">Earth,
+                Wind, and Fire
+            </td>
+            <td class="border-b border-slate-200 dark:border-slate-600 p-4 pr-8 text-slate-500 dark:text-slate-400">
+                1975
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </template>
+
+<style scoped>
+
+</style>
