@@ -9,7 +9,6 @@ type Props = {
 }
 
 const props = defineProps<Props>()
-
 const { date } = toRefs(props)
 const luxonDt = computed(() => DateTime.fromJSDate(date.value))
 const relativeDay = computed(() => {
@@ -18,13 +17,12 @@ const relativeDay = computed(() => {
         const firstLetter = str[0].toUpperCase()
         str = firstLetter + str.substring(1)
     }
-   
+
     return str
 })
+
 const displayDay = computed(() => luxonDt.value.toFormat('d LLL yy'))
-
 const todos = useTodosStore().todos
-
 </script>
 
 <template>

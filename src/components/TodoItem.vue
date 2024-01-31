@@ -32,7 +32,7 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
     await todoStatusStore.createTodoStatus({
         todoId: todoStatus!.todoId,
         isCompleted: newVal,
-        occurredAt: todoStatus!.occurredAt
+        occurDate: todoStatus!.occurDate
     })
 }
 

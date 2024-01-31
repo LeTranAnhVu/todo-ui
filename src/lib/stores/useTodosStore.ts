@@ -3,40 +3,18 @@ import { ref } from 'vue'
 import { useApiFetch } from '@/main.ts'
 import { TodoDto } from '@/lib/types/TodoDto.ts'
 import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
-import { SubTodoDto } from '@/lib/types/SubTodoDto.ts'
+import { DateOnly } from '@/lib/types/DateOnly.ts'
 
 export type CreateTodoDto = {
     name: string
-    subTodos: Omit<CreateTodoDto, 'subTodos'>[] | null
+    subTodos: Omit<CreateTodoDto, 'subTodos' | 'startDate' | 'endDate'>[] | null
     repeatableType: RepeatableType | null
-    startedAt: Date | null
-    endedAt: Date | null
+    startDate: DateOnly
+    endDate: DateOnly | null
 }
 
 export type UpdateTodoDto = {
     name: string
-}
-
-function mapSubTodo(subTodo: SubTodoDto): SubTodoDto {
-    return {
-        ...subTodo,
-        createdAt: new Date(subTodo.createdAt),
-        updatedAt: subTodo.updatedAt ? new Date(subTodo.updatedAt) : subTodo.updatedAt,
-        startedAt: new Date(subTodo.startedAt),
-        endedAt: subTodo.endedAt ? new Date(subTodo.endedAt) : subTodo.endedAt
-    }
-}
-
-function mapTodo(todo: TodoDto): TodoDto {
-    const subTodos = todo.subTodos.map(std => mapSubTodo(std))
-    return {
-        ...todo,
-        subTodos: subTodos,
-        createdAt: new Date(todo.createdAt),
-        updatedAt: todo.updatedAt ? new Date(todo.updatedAt) : todo.updatedAt,
-        startedAt: new Date(todo.startedAt),
-        endedAt: todo.endedAt ? new Date(todo.endedAt) : todo.endedAt
-    }
 }
 
 export const useTodosStore = defineStore('todos', () => {
@@ -44,7 +22,6 @@ export const useTodosStore = defineStore('todos', () => {
 
     async function fetchTodos() {
         const { data } = await useApiFetch('todos').get().json<TodoDto[]>()
-        data.value = !data.value ? data.value : data.value.map(mapTodo)
         todos.value = data.value || []
     }
 
@@ -54,7 +31,7 @@ export const useTodosStore = defineStore('todos', () => {
             throw Error('empty todo')
         }
 
-        todos.value.unshift(mapTodo(data.value))
+        todos.value.unshift(data.value)
     }
 
     async function updateTodo(id: string, payload: UpdateTodoDto) {
@@ -64,7 +41,7 @@ export const useTodosStore = defineStore('todos', () => {
         }
         const idx = todos.value.findIndex(td => td.id === id)
         if (idx !== -1) {
-            todos.value.splice(idx, 1, mapTodo(data.value))
+            todos.value.splice(idx, 1, data.value)
         }
     }
 

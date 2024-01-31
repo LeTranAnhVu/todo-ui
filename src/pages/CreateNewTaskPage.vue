@@ -7,7 +7,8 @@ import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
 import dayjs from 'dayjs'
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 import Btn from '@/components/Btn.vue'
-import { parseUTCDate } from '@/lib/helpers/parseUTCDate.ts'
+import { toDateOnly } from '@/lib/helpers/toDateOnly.ts'
+import { isAfterDateOnly } from '@/lib/helpers/isAfterDateOnly.ts'
 
 type CreateTodoForm = {
     id?: string
@@ -53,13 +54,13 @@ const deleteSubTodo = (id?: string) => {
 
 const formErrors = reactive<{
     name: [boolean, string],
-    startedAt: [boolean, string],
-    endedAt: [boolean, string],
+    startDate: [boolean, string],
+    endDate: [boolean, string],
     subTodos: Record<string, [boolean, string]>
 }>({
     name: [false, ''],
-    startedAt: [false, ''],
-    endedAt: [false, ''],
+    startDate: [false, ''],
+    endDate: [false, ''],
     subTodos: {}
 })
 
@@ -72,30 +73,28 @@ const validate = (): boolean => {
     } else {
         formErrors.name = [false, '']
     }
+    // Start date must define
+    if (startDate.value.length === 0) {
+        formErrors.startDate = [true, 'Required']
+        isValid = false
+    } else {
+        formErrors.startDate = [false, '']
+    }
 
     if (createTodoForm.isRepeated) {
-        // Start date must define
-        if (startDate.value.length === 0) {
-            formErrors.startedAt = [true, 'Required']
-            isValid = false
-        } else {
-            formErrors.startedAt = [false, '']
-        }
-
-        if (startDate.value.length !== 0 && endDate.value.length !== 0) {
+        if (endDate.value.length !== 0) {
             // End date must be after the start date if it is defined
-            if (dayjs(endDate.value[0]).isBefore(startDate.value[0])) {
-                formErrors.endedAt = [true, 'End date must be after the start date']
+            if (isAfterDateOnly(startDate.value[0], endDate.value[0])) {
+                formErrors.endDate = [true, 'End date must be after the start date']
                 isValid = false
             } else {
-                formErrors.endedAt = [false, '']
+                formErrors.endDate = [false, '']
             }
         } else {
-            formErrors.endedAt = [false, '']
+            formErrors.endDate = [false, '']
         }
     } else {
-        formErrors.startedAt = [false, '']
-        formErrors.endedAt = [false, '']
+        formErrors.endDate = [false, '']
     }
 
     // subtasks name are required
@@ -110,14 +109,13 @@ const validate = (): boolean => {
 
     return isValid
 }
+
 const createTodo = async () => {
     if (validate()) {
-        const mapSubTodo = (form: Omit<CreateTodoForm, 'subTodos'>): Omit<CreateTodoDto, 'subTodos'> => {
+        const mapSubTodo = (form: Omit<CreateTodoForm, 'subTodos'>): Omit<CreateTodoDto, 'subTodos' | 'startDate' | 'endDate'> => {
             return {
                 name: form.name,
-                repeatableType: form.isRepeated ? RepeatableType.Daily : RepeatableType.Once,
-                startedAt: form.isRepeated ? parseUTCDate(startDate.value[0]) : null,
-                endedAt: form.isRepeated && endDate.value.length !== 0 ? parseUTCDate(endDate.value[0]) : null
+                repeatableType: form.isRepeated ? RepeatableType.Daily : RepeatableType.Once
             }
         }
 
@@ -125,12 +123,14 @@ const createTodo = async () => {
             name: createTodoForm.name,
             subTodos: createTodoForm.subTodos.map(mapSubTodo),
             repeatableType: createTodoForm.isRepeated ? RepeatableType.Daily : RepeatableType.Once,
-            startedAt: createTodoForm.isRepeated ? parseUTCDate(startDate.value[0]) : null,
-            endedAt: createTodoForm.isRepeated && endDate.value.length !== 0 ? parseUTCDate(endDate.value[0]) : null
+            startDate: toDateOnly(startDate.value[0]),
+            endDate: createTodoForm.isRepeated && endDate.value.length !== 0 ? toDateOnly(endDate.value[0]) : null
         }
 
         const todoStore = useTodosStore()
         await todoStore.createTodo(dto)
+    } else {
+        console.error("Validation failed")
     }
 }
 </script>
@@ -154,22 +154,19 @@ const createTodo = async () => {
                 <Checkbox
                     v-model="createTodoForm.isRepeated"
                     label="Repeat daily:" />
+                <div class="inputField">
+                    <label class="mb-2">Started at:</label>
+                    <vue-tailwind-datepicker
+                        v-model="startDate"
+                        as-single
+                        :formatter="dateFormatter" />
+                    <span
+                        v-if="formErrors.startDate[1]"
+                        class="errorMessage">
+                    {{ formErrors.startDate[1] }} </span>
+                </div>
 
                 <template v-if="createTodoForm.isRepeated">
-                    <div class="inputField">
-                        <label class="mb-2">Started at:</label>
-                        <vue-tailwind-datepicker
-                            v-model="startDate"
-                            as-single
-                            :formatter="dateFormatter" />
-
-                        <span
-                            v-if="formErrors.startedAt[1]"
-                            class="errorMessage">
-                    {{ formErrors.startedAt[1] }} </span>
-                    </div>
-
-
                     <div class="inputField">
                         <label class="mb-2">Ended at (optional):</label>
                         <Btn
@@ -186,9 +183,9 @@ const createTodo = async () => {
                             :formatter="dateFormatter" />
 
                         <span
-                            v-if="formErrors.endedAt[1]"
+                            v-if="formErrors.endDate[1]"
                             class="errorMessage">
-                    {{ formErrors.endedAt[1] }} </span>
+                    {{ formErrors.endDate[1] }} </span>
                     </div>
                 </template>
             </div>

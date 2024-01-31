@@ -1,3 +1,5 @@
+import { DateOnly } from '@/lib/types/DateOnly.ts'
+
 export type TodoStatusDto = {
     id: string
     todoName: string
@@ -6,5 +8,5 @@ export type TodoStatusDto = {
     createdAt: Date
     updatedAt: Date | null
     completedAt: Date | null
-    occurredAt: Date
+    occurDate: DateOnly
 }

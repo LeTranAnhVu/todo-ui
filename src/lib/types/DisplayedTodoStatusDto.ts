@@ -6,5 +6,4 @@ export type DisplayedTodoStatusDto = Override<TodoStatusDto, {
     createdAt: Date | null
     updatedAt: Date | null
     completedAt: Date | null
-    occurredAt: Date
 }>

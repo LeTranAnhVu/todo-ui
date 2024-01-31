@@ -2,27 +2,19 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { TodoStatusDto } from '@/lib/types/TodoStatusDto.ts'
 import { useApiFetch } from '@/main.ts'
-import { isSameDay } from '@/lib/helpers/isSameDay.ts'
+import { isSameDateOnly } from '@/lib/helpers/isSameDateOnly.ts'
 import { DisplayedTodoStatusDto } from '@/lib/types/DisplayedTodoStatusDto.ts'
 import { TodoDto } from '@/lib/types/TodoDto.ts'
 import { SubTodoDto } from '@/lib/types/SubTodoDto.ts'
 import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
-import { isAfterDay } from '@/lib/helpers/isAfterDay.ts'
+import { isAfterDateOnly } from '@/lib/helpers/isAfterDateOnly.ts'
+import { toDateOnly } from '@/lib/helpers/toDateOnly.ts'
+import { DateOnly } from '@/lib/types/DateOnly.ts'
 
 export type CreateTodoStatusDto = {
     todoId: string
     isCompleted: boolean,
-    occurredAt: Date
-}
-
-function mapTodoStatus(todoStatus: TodoStatusDto): TodoStatusDto {
-    return {
-        ...todoStatus,
-        createdAt: new Date(todoStatus.createdAt),
-        updatedAt: todoStatus.updatedAt ? new Date(todoStatus.updatedAt) : todoStatus.updatedAt,
-        occurredAt: new Date(todoStatus.occurredAt),
-        completedAt: todoStatus.completedAt ? new Date(todoStatus.completedAt) : todoStatus.completedAt
-    }
+    occurDate: DateOnly
 }
 
 export const useTodoStatusesStore = defineStore('todoStatuses', () => {
@@ -32,22 +24,23 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
         // If the todo is available later than the given day,
         //  Or the end day is over 
         //  return null
-        if (isAfterDay(todo.startedAt, day) || (todo.endedAt && isAfterDay(day, todo.endedAt))) {
+        if (isAfterDateOnly(todo.startDate, day) || (todo.endDate && isAfterDateOnly(day, todo.endDate))) {
             return null
         }
 
         // Find the status of given todo at given day if has
-        const currentDayStatus: DisplayedTodoStatusDto | undefined = todoStatuses.value.find(stt => isSameDay(stt.occurredAt, day)
-            && todo.id === stt.todoId)
+        const currentDayStatus: DisplayedTodoStatusDto | undefined = todoStatuses.value
+            .find(stt => isSameDateOnly(stt.occurDate, day)
+                && todo.id === stt.todoId)
 
         if (currentDayStatus) {
             return currentDayStatus
         }
-
+        
         const newStatus: DisplayedTodoStatusDto = {
             id: null,
             completedAt: null,
-            occurredAt: day,
+            occurDate: toDateOnly(day),
             createdAt: null,
             updatedAt: null,
             todoName: todo.name,
@@ -56,7 +49,7 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
         }
 
         if (todo.repeatableType === RepeatableType.Once
-            && !isSameDay(todo.startedAt, day)) {
+            && !isSameDateOnly(todo.startDate, day)) {
             // don't return status if it is once time and the day is not the repeatable started at
             return null
         }
@@ -66,17 +59,16 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
 
     async function fetchTodoStatuses() {
         const { data } = await useApiFetch('todoStatuses').get().json<TodoStatusDto[]>()
-        data.value = !data.value ? data.value : data.value.map(mapTodoStatus)
         todoStatuses.value = data.value || []
     }
 
     async function createTodoStatus(payload: CreateTodoStatusDto) {
         const { data } = await useApiFetch('todoStatuses').post(payload).json<TodoStatusDto>()
         if (data.value) {
-            const upsertTodoStatus = mapTodoStatus(data.value)
+            const upsertTodoStatus = data.value
             // Find the index of the existing status
             const idx = todoStatuses.value.findIndex(tds => tds.todoId === upsertTodoStatus!.todoId
-                && isSameDay(tds.occurredAt, upsertTodoStatus!.occurredAt))
+                && isSameDateOnly(tds.occurDate, upsertTodoStatus!.occurDate))
 
             if (idx === -1) {
                 todoStatuses.value.push(upsertTodoStatus)
