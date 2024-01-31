@@ -34,7 +34,11 @@ const todos = useTodosStore().todos
             </p>
         </div>
         <div class="todos">
-            <TodoItem v-for="todo in todos" :key="todo.id" :date="date" :todo="todo" />
+            <TodoItem
+                v-for="todo in todos"
+                :key="todo.id"
+                :date="date"
+                :todo="todo" />
         </div>
     </div>
 </template>

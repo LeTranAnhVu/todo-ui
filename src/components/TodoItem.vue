@@ -39,7 +39,11 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
 </script>
 
 <template>
-    <div v-if="todoStatus" class="todo" :data-collapsed="isCollapsed" :data-completed="todoStatus.isCompleted">
+    <div
+        v-if="todoStatus"
+        class="todo"
+        :data-collapsed="isCollapsed"
+        :data-completed="todoStatus.isCompleted">
         <div class="main">
             <div class="left">
                 <Checkbox
@@ -49,8 +53,13 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
                 <p class="name">{{ todoStatus.todoName }}</p>
             </div>
             <div class="right">
-                <div v-if="subTodoStatuses.length" class="sub-todo-action" @click="handleCollapseTask">
-                    <p v-if="subTodoStatuses" :class="{'line-through': allSubTodosCompleted}">
+                <div
+                    v-if="subTodoStatuses.length"
+                    class="sub-todo-action"
+                    @click="handleCollapseTask">
+                    <p 
+                        v-if="subTodoStatuses" 
+                        :class="{'line-through': allSubTodosCompleted}">
                         {{ completedSubTodos.length }}/{{ subTodoStatuses.length }} tasks</p>
                     <Icon
                         v-if="subTodoStatuses.length"
@@ -62,20 +71,22 @@ const updateStatus = async (todoStatus: DisplayedTodoStatusDto | null, newVal: b
         </div>
         <div class="collapsed">
             <!--  sub tasks -->
-            <ul v-if="isCollapsed && subTodoStatuses.length" class="sub-todos">
+            <ul
+                v-if="isCollapsed && subTodoStatuses.length"
+                class="sub-todos">
                 <li
-                    v-for="subTodoStatus in subTodoStatuses"
-                    :key="subTodoStatus.todoId"
+                    v-for="stdStt in subTodoStatuses"
+                    :key="stdStt.todoId"
                     class="sub-todo"
-                    :data-completed="subTodoStatus.isCompleted">
+                    :data-completed="stdStt.isCompleted">
                     <div class="main">
                         <div class="left">
                             <Checkbox
-                                :model-value="subTodoStatus.isCompleted"
-                                @update:model-value="(newVal: boolean) => updateStatus(subTodoStatus, newVal)"
+                                :model-value="stdStt.isCompleted"
+                                @update:model-value="(newVal: boolean) => updateStatus(stdStt, newVal)"
                             />
 
-                            <p class="name">{{ subTodoStatus.todoName }}</p>
+                            <p class="name">{{ stdStt.todoName }}</p>
                         </div>
                         <div class="right">
                             <!-- nothing here -->
