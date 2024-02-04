@@ -45,11 +45,23 @@ export const useTodosStore = defineStore('todos', () => {
         }
     }
 
-    async function deleteTodo(id: string) {
+    async function deleteTodo(id: string, parentId?: string) {
         await useApiFetch(`todos/${id}`).delete()
-        const idx = todos.value.findIndex(td => td.id === id)
-        if (idx !== -1) {
-            todos.value.splice(idx, 1)
+        if (parentId) {
+            // find the sub item
+            todos.value.forEach(todo => {
+                if (todo.id === parentId) {
+                    const idx = todo.subTodos?.findIndex(td => td.id === id)
+                    if (idx !== -1) {
+                        todo.subTodos.splice(idx, 1)
+                    }
+                }
+            })
+        } else {
+            const idx = todos.value.findIndex(td => td.id === id)
+            if (idx !== -1) {
+                todos.value.splice(idx, 1)
+            }
         }
     }
 

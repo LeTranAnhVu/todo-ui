@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUserSecret, faAngleLeft } from '@fortawesome/free-solid-svg-icons'
+import { faUserSecret, faAngleLeft, faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from '@fortawesome/free-regular-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { router } from '@/router.ts'
@@ -12,7 +12,7 @@ import createApiFetch from '@/lib/createApiFetch.ts'
 import { createPinia } from 'pinia'
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 
-library.add(faUserSecret, faAngleLeft, faCircleXmark)
+library.add(faUserSecret, faAngleLeft, faCircleXmark, faTrash, faPen)
 
 const app = createApp(App)
 
