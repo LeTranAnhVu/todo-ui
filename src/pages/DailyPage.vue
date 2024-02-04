@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TodoList from '@/components/TodoList.vue'
+import TodoStatusList from '@/components/TodoStatusList.vue'
 import Spinner from '@/components/Spinner.vue'
 import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
 import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
@@ -35,7 +35,7 @@ const displayedDates = computed<Date[]>(() => {
             </div>
         </template>
         <template v-else>
-            <TodoList
+            <TodoStatusList
                 v-for="date in displayedDates"
                 :key="date.toUTCString()"
                 :date="date" />

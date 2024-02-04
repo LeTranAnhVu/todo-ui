@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TodoItem from '@/components/TodoItem.vue'
+import TodoStatusItem from '@/components/TodoStatusItem.vue'
 import { computed, toRefs } from 'vue'
 import { DateTime } from 'luxon'
 import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
@@ -34,7 +34,7 @@ const todos = useTodosStore().todos
             </p>
         </div>
         <div class="todos">
-            <TodoItem
+            <TodoStatusItem
                 v-for="todo in todos"
                 :key="todo.id"
                 :date="date"
