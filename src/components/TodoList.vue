@@ -8,7 +8,7 @@ const todos = computed(() => useTodosStore().todos)
 
 <template>
     <div class="list">
-        <todo-item v-for="todo in todos" :key="todo.id" :item="todo" />
+        <TodoItem v-for="todo in todos" :key="todo.id" :item="todo" />
     </div>
 </template>
 

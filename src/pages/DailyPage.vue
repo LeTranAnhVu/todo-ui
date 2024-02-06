@@ -22,7 +22,7 @@ onMounted(async () => {
 const displayedDates = computed<Date[]>(() => {
     // TODO find good way to handle utc
     const today = parseUTCDate(new Date().toUTCString())
-    return [...[3, 2, 1].map(offset => addDays(today, offset)), today, ...[-1, -2, -3].map(offset => addDays(today, offset))]
+    return [...[2, 1].map(offset => addDays(today, offset)), today, ...[-1, -2, -3].map(offset => addDays(today, offset))]
 })
 
 </script>

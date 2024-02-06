@@ -15,10 +15,6 @@ const subItems = item.value.subTodos
 
 const todoStore = useTodosStore()
 
-const handleCollapse = () => {
-    isCollapsed.value = !isCollapsed.value
-}
-
 const deleteItem = async (id: string, parentId?: string) => {
     const confirm = window.confirm('Do you want to delete it?')
     if (confirm) {
@@ -35,43 +31,15 @@ const deleteItem = async (id: string, parentId?: string) => {
         <div class="main">
             <div class="left">
                 <p class="name">{{ item.name }}</p>
-                <Icon icon="fa-solid fa-pen"></Icon>
+                <p v-if="subItems.length" class="font-light italic">({{ subItems.length }} tasks)</p>
             </div>
             <div class="right">
-                <div
-                    v-if="subItems.length"
-                    class="sub-todo-action"
-                    @click="handleCollapse">
-                    <p v-if="subItems.length">{{ subItems.length }} tasks</p>
-                    <Icon icon="fa-solid fa-angle-left" class="collapsed-icon"></Icon>
-                </div>
-                <div class="ml-2">
-                    <Icon icon="fa-solid fa-trash" @click="() => deleteItem(item.id)"/>
+
+                <div class="flex gap-3">
+                    <Icon icon="fa-solid fa-pen"></Icon>
+                    <Icon icon="fa-solid fa-trash" @click="() => deleteItem(item.id)" />
                 </div>
             </div>
-        </div>
-        <div class="collapsed">
-            <!--  sub tasks -->
-            <ul
-                v-if="isCollapsed && subItems.length"
-                class="sub-todos">
-                <li
-                    v-for="subItem in subItems"
-                    :key="subItem.id"
-                    class="sub-todo">
-                    <div class="main">
-                        <div class="left">
-                            <p class="name">{{ subItem.name }}</p>
-                            <Icon class="ml-3" icon="fa-solid fa-pen"></Icon>
-                        </div>
-                        <div class="right">
-                            <div class="ml-2">
-                                <Icon icon="fa-solid fa-trash" @click="() => deleteItem(subItem.id, item.id)"/>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
         </div>
     </div>
 </template>

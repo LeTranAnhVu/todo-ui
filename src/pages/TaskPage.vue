@@ -3,7 +3,7 @@ import TodoList from '@/components/TodoList.vue'
 </script>
 
 <template>
-    <todo-list />
+    <TodoList />
 </template>
 
 <style scoped>
