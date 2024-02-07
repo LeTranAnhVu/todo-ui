@@ -5,13 +5,16 @@ type Props = {
     // checked: boolean
     modelValue: boolean
     label?: string
+    disabled?: boolean
 }
 
 defineEmits(['update:modelValue'])
 const formatBoolean = (value: string) => value === 'true'
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+    disabled: false
+})
 
-const { modelValue, label } = toRefs(props)
+const { modelValue, label, disabled } = toRefs(props)
 const input = ref<HTMLInputElement | null>(null)
 
 const handleClick = async () => {
@@ -26,10 +29,11 @@ const handleClick = async () => {
 <template>
     <div class="checkbox" :data-checked="modelValue">
         <span v-if="label">{{ label }}</span>
-        <div class="input-wrapper" @click="handleClick">
+        <div class="input-wrapper" :data-disabled="disabled" @click="handleClick">
             <input
                 ref="input"
                 :value="modelValue"
+                :disabled="disabled"
                 type="checkbox"
                 @input="$emit('update:modelValue',  formatBoolean(($event.target as HTMLInputElement).value))">
         </div>
@@ -40,6 +44,7 @@ const handleClick = async () => {
 .checkbox {
     @apply relative
     flex flex-nowrap justify-between items-center;
+
 
     .input-wrapper {
         @apply relative
@@ -56,6 +61,10 @@ const handleClick = async () => {
 
         input {
             @apply appearance-none;
+        }
+
+        &[data-disabled=true] {
+            @apply opacity-50 pointer-events-none;
         }
     }
 

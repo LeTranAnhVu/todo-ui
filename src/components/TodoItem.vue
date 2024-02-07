@@ -1,8 +1,12 @@
 <script setup lang="ts">
 
 import { TodoDto } from '@/lib/types/TodoDto.ts'
-import { ref, toRefs } from 'vue'
+import { defineAsyncComponent, toRefs } from 'vue'
 import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
+import useAppStore from '@/lib/stores/useAppStore.ts'
+import { SubTodoForm, TaskEditorProps } from '@/components/TaskEditor.vue'
+import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
+import { SubTodoDto } from '@/lib/types/SubTodoDto.ts'
 
 type Props = {
     item: TodoDto
@@ -10,7 +14,6 @@ type Props = {
 
 const props = defineProps<Props>()
 const { item } = toRefs(props)
-const isCollapsed = ref(false)
 const subItems = item.value.subTodos
 
 const todoStore = useTodosStore()
@@ -21,13 +24,37 @@ const deleteItem = async (id: string, parentId?: string) => {
         await todoStore.deleteTodo(id, parentId)
     }
 }
+
+const openDrawer = (item: TodoDto) => {
+    const appStore = useAppStore()
+    appStore.bottomDrawer.isOpened = true
+    appStore.bottomDrawer.component = defineAsyncComponent(() => import('@/components/TaskEditor.vue'))
+    const subMapping = (sub: SubTodoDto): SubTodoForm => {
+       return {
+           id: sub.id,
+           name: sub.name,
+           isRepeated: sub.repeatableType !== RepeatableType.Once
+       }
+    }
+
+    appStore.bottomDrawer.props = {
+        operation: 'update',
+        initialTodoForm: {
+            id: item.id,
+            name: item.name,
+            startDate: item.startDate,
+            endDate: item.endDate,
+            isRepeated: item.repeatableType !== RepeatableType.Once,
+            subTodos: item.subTodos.map(subMapping)
+        }
+    } as TaskEditorProps
+}
 </script>
 
 <template>
     <div
         v-if="item"
-        class="todo"
-        :data-collapsed="isCollapsed">
+        class="todo">
         <div class="main">
             <div class="left">
                 <p class="name">{{ item.name }}</p>
@@ -36,7 +63,7 @@ const deleteItem = async (id: string, parentId?: string) => {
             <div class="right">
 
                 <div class="flex gap-3">
-                    <Icon icon="fa-solid fa-pen"></Icon>
+                    <Icon icon="fa-solid fa-pen" @click="() => openDrawer(item)"></Icon>
                     <Icon icon="fa-solid fa-trash" @click="() => deleteItem(item.id)" />
                 </div>
             </div>
@@ -63,43 +90,7 @@ const deleteItem = async (id: string, parentId?: string) => {
         .right {
             @apply flex flex-nowrap gap-2 items-center;
 
-            .sub-todo-action {
-                @apply flex flex-nowrap gap-2 items-center cursor-pointer;
-
-                .collapsed-icon {
-                    @apply transition-all duration-200 ease-in-out;
-                }
-            }
         }
-    }
-
-    .collapsed {
-        @apply h-0 invisible
-        transition-all duration-200 ease-in-out;
-    }
-
-    &[data-collapsed=true] {
-        .collapsed {
-            @apply mt-5 h-fit visible;
-        }
-
-        .right {
-            .collapsed-icon {
-                @apply -rotate-90;
-            }
-        }
-    }
-
-
-}
-
-.sub-todos {
-    @apply flex flex-col gap-3 pl-3;
-    .sub-todo {
-        @apply
-        pb-3
-        border-b last:border-b-0;
     }
 }
-
 </style>

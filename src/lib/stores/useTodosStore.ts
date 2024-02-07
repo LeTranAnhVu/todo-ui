@@ -5,9 +5,11 @@ import { TodoDto } from '@/lib/types/TodoDto.ts'
 import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
 import { DateOnly } from '@/lib/types/DateOnly.ts'
 
+export type CreateSubTodoDto = Omit<CreateTodoDto, 'subTodos' | 'startDate' | 'endDate'>
+
 export type CreateTodoDto = {
     name: string
-    subTodos: Omit<CreateTodoDto, 'subTodos' | 'startDate' | 'endDate'>[] | null
+    subTodos: CreateSubTodoDto[] | null
     repeatableType: RepeatableType | null
     startDate: DateOnly
     endDate: DateOnly | null

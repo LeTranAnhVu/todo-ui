@@ -13,9 +13,6 @@
         <router-link :to="{name: 'tasks'}" class="navbar-item">
             Tasks
         </router-link>
-        <router-link :to="{name: 'create-task'}" class="navbar-item">
-            New task
-        </router-link>
     </div>
 </template>
 

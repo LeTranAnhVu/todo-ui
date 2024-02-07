@@ -1,6 +1,5 @@
 import DailyPage from '@/pages/DailyPage.vue'
 import TaskPage from '@/pages/TaskPage.vue'
-import CreateNewTaskPage from '@/pages/CreateNewTaskPage.vue'
 import LoginPage from '@/pages/LoginPage.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Layout from '@/components/layout/Layout.vue'
@@ -17,7 +16,6 @@ const routes = [
         children: [
             { path: 'daily', component: DailyPage, name: 'daily' },
             { path: 'tasks', component: TaskPage, name: 'tasks' },
-            { path: 'create-task', component: CreateNewTaskPage, name: 'create-task' }
         ]
     },
     { path: '/:pathMatch(.*)', component: NotFoundPage }

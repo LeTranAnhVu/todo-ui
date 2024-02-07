@@ -10,6 +10,7 @@ const todos = computed(() => useTodosStore().todos)
     <div class="list">
         <TodoItem v-for="todo in todos" :key="todo.id" :item="todo" />
     </div>
+
 </template>
 
 <style scoped>
