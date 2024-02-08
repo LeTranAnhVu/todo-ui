@@ -19,6 +19,7 @@ export type CreateTodoStatusDto = {
 
 export const useTodoStatusesStore = defineStore('todoStatuses', () => {
     const todoStatuses = ref<TodoStatusDto[]>([])
+    const isProcessing = ref<'get-all' | 'create' | null>(null)
 
     function getTodoStatusByDay(todo: TodoDto | SubTodoDto, day: Date): DisplayedTodoStatusDto | null {
         // If the todo is available later than the given day,
@@ -58,11 +59,14 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
     }
 
     async function fetchTodoStatuses() {
+        isProcessing.value = 'get-all'
         const { data } = await useApiFetch('todoStatuses').get().json<TodoStatusDto[]>()
         todoStatuses.value = data.value || []
+        isProcessing.value = null
     }
 
     async function createTodoStatus(payload: CreateTodoStatusDto) {
+        isProcessing.value = 'create'
         const { data } = await useApiFetch('todoStatuses').post(payload).json<TodoStatusDto>()
         if (data.value) {
             const upsertTodoStatus = data.value
@@ -76,8 +80,10 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
                 todoStatuses.value.splice(idx, 1, upsertTodoStatus)
             }
         }
+
+        isProcessing.value = null
     }
 
-    return { todoStatuses, fetchTodoStatuses, createTodoStatus, getTodoStatusByDay }
+    return { todoStatuses, fetchTodoStatuses, createTodoStatus, getTodoStatusByDay, isProcessing}
 })
 

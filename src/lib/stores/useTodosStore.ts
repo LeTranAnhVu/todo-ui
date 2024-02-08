@@ -28,22 +28,29 @@ export type UpdateTodoDto = {
 
 export const useTodosStore = defineStore('todos', () => {
     const todos = ref<TodoDto[]>([])
+    const isProcessing = ref<'get-all' | 'create' | 'update' | 'delete' | null>(null)
 
     async function fetchTodos() {
+        isProcessing.value = 'get-all'
         const { data } = await useApiFetch('todos').get().json<TodoDto[]>()
         todos.value = data.value || []
+        isProcessing.value = null
     }
 
     async function createTodo(payload: CreateTodoDto) {
+        isProcessing.value = 'create'
+
         const { data } = await useApiFetch('todos').post(payload).json<TodoDto>()
         if (!data.value) {
             throw Error('empty todo')
         }
 
         todos.value.unshift(data.value)
+        isProcessing.value = null
     }
 
     async function updateTodo(id: string, payload: UpdateTodoDto) {
+        isProcessing.value = 'update'
         const { data } = await useApiFetch(`todos/${id}`).put(payload).json<TodoDto>()
         if (!data.value) {
             throw Error('empty todo')
@@ -52,9 +59,11 @@ export const useTodosStore = defineStore('todos', () => {
         if (idx !== -1) {
             todos.value.splice(idx, 1, data.value)
         }
+        isProcessing.value = null
     }
 
     async function deleteTodo(id: string, parentId?: string) {
+        isProcessing.value = 'delete'
         await useApiFetch(`todos/${id}`).delete()
         if (parentId) {
             // find the sub item
@@ -72,7 +81,9 @@ export const useTodosStore = defineStore('todos', () => {
                 todos.value.splice(idx, 1)
             }
         }
+
+        isProcessing.value = null
     }
 
-    return { todos, fetchTodos, createTodo, updateTodo, deleteTodo }
+    return { todos, fetchTodos, createTodo, updateTodo, deleteTodo, isProcessing }
 })
