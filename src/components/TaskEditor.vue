@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid'
 import Checkbox from '@/components/Checkbox.vue'
-import { reactive, ref, toRefs, watch } from 'vue'
+import { computed, reactive, ref, toRefs, watch } from 'vue'
 import {
     CreateSubTodoDto,
     CreateTodoDto,
@@ -58,7 +58,7 @@ const todoForm = reactive<TodoForm>({ ...initialTodoForm.value })
 const startDateField = ref<string[]>(todoForm.startDate ? [dayjs(todoForm.startDate).format(dateFormat)] : [dayjs().format(dateFormat)])
 const endDateField = ref<string[]>(todoForm.endDate ? [dayjs(todoForm.endDate).format(dateFormat)] : [])
 const recentTodoRepeatType = ref<boolean>(todoForm.isRepeated)
-const isLoading = ref(false)
+const isLoading = computed(() => useTodosStore().isProcessing)
 watch(() => todoForm.isRepeated, (newVal) => {
     recentTodoRepeatType.value = newVal
 })
@@ -145,7 +145,6 @@ const validate = (): boolean => {
 
 const createTodo = async () => {
     if (validate()) {
-        isLoading.value = true
 
         const mapSubTodo = (form: SubTodoForm): CreateSubTodoDto => {
             return {
@@ -165,7 +164,6 @@ const createTodo = async () => {
         const todoStore = useTodosStore()
 
         await todoStore.createTodo(dto)
-        isLoading.value = false
         emits('done')
     } else {
         console.error('Validation failed')
@@ -174,7 +172,6 @@ const createTodo = async () => {
 
 const updateTodo = async () => {
     if (validate() && todoForm.id && !isTmpId(todoForm.id)) {
-        isLoading.value = true
         const todoStore = useTodosStore()
 
         const mapUpsertSubTodo = (subForm: SubTodoForm): UpsertNestedSubTodoDto => ({
@@ -188,7 +185,6 @@ const updateTodo = async () => {
         }
 
         await todoStore.updateTodo(todoForm.id, dto)
-        isLoading.value = false
         emits('done')
     } else {
         console.error('Validation failed')

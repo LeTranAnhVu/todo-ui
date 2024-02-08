@@ -1,6 +1,18 @@
 <script setup lang="ts">
-import BottomDrawer from '@/components/BottomDrawer.vue'
 
+import { useAuth0 } from '@auth0/auth0-vue'
+import { watch } from 'vue'
+import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
+import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
+
+const { isAuthenticated } = useAuth0()
+const todosStore = useTodosStore()
+const todoStatusesStore = useTodoStatusesStore()
+
+watch(isAuthenticated, async () => {
+    await todosStore.fetchTodos()
+    await todoStatusesStore.fetchTodoStatuses()
+})
 </script>
 
 <template>

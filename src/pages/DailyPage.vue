@@ -3,21 +3,14 @@ import TodoStatusList from '@/components/TodoStatusList.vue'
 import Spinner from '@/components/Spinner.vue'
 import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
 import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
-import { computed, onMounted, ref } from 'vue'
+import { computed } from 'vue'
 import { addDays } from '@/lib/helpers/addDays.ts'
 import { parseUTCDate } from '@/lib/helpers/parseUTCDate.ts'
 
 const todosStore = useTodosStore()
 const todoStatusesStore = useTodoStatusesStore()
 
-const isLoading = ref(false)
-
-onMounted(async () => {
-    isLoading.value = true
-    await todosStore.fetchTodos()
-    await todoStatusesStore.fetchTodoStatuses()
-    isLoading.value = false
-})
+const isLoading = computed(() => todosStore.isProcessing || todoStatusesStore.isProcessing)
 
 const displayedDates = computed<Date[]>(() => {
     // TODO find good way to handle utc
