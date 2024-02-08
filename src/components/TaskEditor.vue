@@ -16,6 +16,7 @@ import Btn from '@/components/Btn.vue'
 import { toDateOnly } from '@/lib/helpers/toDateOnly.ts'
 import { isAfterDateOnly } from '@/lib/helpers/isAfterDateOnly.ts'
 import { DateOnly } from '@/lib/types/DateOnly.ts'
+import LoadingCard from '@/pages/LoadingCard.vue'
 
 const dateFormat = 'DD MMM YYYY'
 
@@ -34,7 +35,7 @@ export type TaskEditorProps = {
     initialTodoForm?: TodoForm
 }
 
-const genTmpId = () =>  `TMP_${uuidv4()}`
+const genTmpId = () => `TMP_${uuidv4()}`
 const isTmpId = (id: string) => id.startsWith('TMP_')
 const whatIsRepeatableType = (isRepeated: boolean): RepeatableType => isRepeated ? RepeatableType.Daily : RepeatableType.Once
 
@@ -56,7 +57,7 @@ const todoForm = reactive<TodoForm>({ ...initialTodoForm.value })
 const startDateField = ref<string[]>(todoForm.startDate ? [dayjs(todoForm.startDate).format(dateFormat)] : [dayjs().format(dateFormat)])
 const endDateField = ref<string[]>(todoForm.endDate ? [dayjs(todoForm.endDate).format(dateFormat)] : [])
 const recentTodoRepeatType = ref<boolean>(todoForm.isRepeated)
-
+const isLoading = ref(false)
 watch(() => todoForm.isRepeated, (newVal) => {
     recentTodoRepeatType.value = newVal
 })
@@ -143,6 +144,8 @@ const validate = (): boolean => {
 
 const createTodo = async () => {
     if (validate()) {
+        isLoading.value = true
+
         const mapSubTodo = (form: SubTodoForm): CreateSubTodoDto => {
             return {
                 name: form.name,
@@ -161,6 +164,7 @@ const createTodo = async () => {
         const todoStore = useTodosStore()
 
         await todoStore.createTodo(dto)
+        isLoading.value = false
     } else {
         console.error('Validation failed')
     }
@@ -168,6 +172,7 @@ const createTodo = async () => {
 
 const updateTodo = async () => {
     if (validate() && todoForm.id && !isTmpId(todoForm.id)) {
+        isLoading.value = true
         const todoStore = useTodosStore()
 
         const mapUpsertSubTodo = (subForm: SubTodoForm): UpsertNestedSubTodoDto => ({
@@ -181,6 +186,7 @@ const updateTodo = async () => {
         }
 
         await todoStore.updateTodo(todoForm.id, dto)
+        isLoading.value = false
     } else {
         console.error('Validation failed')
     }
@@ -189,8 +195,8 @@ const updateTodo = async () => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-10">
-        <div>
+    <LoadingCard :is-loading="isLoading">
+        <div class="flex flex-col gap-10">
             <h2 class="text-lg mb-3">Task</h2>
             <div class="card">
                 <div class="inputField">
@@ -245,44 +251,45 @@ const updateTodo = async () => {
                     </div>
                 </template>
             </div>
-        </div>
-        <div class="subTasks">
-            <h2 class="text-lg mb-3">Sub tasks</h2>
-            <div v-for="subTodo in todoForm.subTodos" :key="subTodo.id" class="task mb-4">
-                <div class="card">
-                    <div class="inputField">
-                        <input
-                            v-model="subTodo.name"
-                            type="text"
-                            class="input-text"
-                            :data-invalid="!!(formErrors.subTodos[subTodo?.id || 'unknown']?.[0])">
-                        <span
-                            v-if="formErrors.subTodos[subTodo?.id || 'unknown']?.[1]"
-                            class="errorMessage">
+            <div class="subTasks">
+                <h2 class="text-lg mb-3">Sub tasks</h2>
+                <div v-for="subTodo in todoForm.subTodos" :key="subTodo.id || 'unknown'" class="task mb-4">
+                    <div class="card">
+                        <div class="inputField">
+                            <input
+                                v-model="subTodo.name"
+                                type="text"
+                                class="input-text"
+                                :data-invalid="!!(formErrors.subTodos[subTodo?.id || 'unknown']?.[0])">
+                            <span
+                                v-if="formErrors.subTodos[subTodo?.id || 'unknown']?.[1]"
+                                class="errorMessage">
                     {{ formErrors.subTodos[subTodo?.id || 'unknown']?.[1] }} </span>
+                        </div>
+                        <Checkbox
+                            v-if="todoForm.isRepeated"
+                            v-model="subTodo.isRepeated"
+                            :disabled="!!(operation==='update' && subTodo.id && !isTmpId(subTodo.id))"
+                            label="Repeat daily:" />
+
+                        <Icon
+                            icon="fa-regular fa-circle-xmark"
+                            size="lg"
+                            class="closeIcon"
+                            @click="deleteSubTodo(subTodo?.id)" />
                     </div>
-                    <Checkbox
-                        v-if="todoForm.isRepeated"
-                        v-model="subTodo.isRepeated"
-                        :disabled="!!(operation==='update' && subTodo.id && !isTmpId(subTodo.id))"
-                        label="Repeat daily:" />
-
-                    <Icon
-                        icon="fa-regular fa-circle-xmark"
-                        size="lg"
-                        class="closeIcon"
-                        @click="deleteSubTodo(subTodo?.id)" />
                 </div>
-            </div>
 
-            <Btn variant="primary-outline" @click="addNewSubTodo">Add new</Btn>
+                <Btn variant="primary-outline" @click="addNewSubTodo">Add new</Btn>
+            </div>
+            <div class="divide"></div>
+            <div class="formActions">
+                <Btn v-if="operation==='create'" variant="primary" @click="createTodo">Create</Btn>
+                <Btn v-else-if="operation==='update'" variant="primary" @click="updateTodo">Update</Btn>
+            </div>
         </div>
-        <div class="divide"></div>
-        <div class="formActions">
-            <Btn v-if="operation==='create'" variant="primary" @click="createTodo">Create</Btn>
-            <Btn v-else-if="operation==='update'" variant="primary" @click="updateTodo">Update</Btn>
-        </div>
-    </div>
+
+    </LoadingCard>
 </template>
 
 <style scoped>

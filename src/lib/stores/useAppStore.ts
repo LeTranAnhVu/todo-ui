@@ -13,7 +13,13 @@ const useAppStore = defineStore('app-settings', () => {
         props: null
     })
 
-    return { bottomDrawer }
+    const closeBottomDrawer = () => {
+        bottomDrawer.isOpened = false
+        bottomDrawer.component = null
+        bottomDrawer.props = null
+    }
+
+    return { bottomDrawer, closeBottomDrawer }
 })
 
 export default useAppStore
