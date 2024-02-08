@@ -10,7 +10,7 @@ import { parseUTCDate } from '@/lib/helpers/parseUTCDate.ts'
 const todosStore = useTodosStore()
 const todoStatusesStore = useTodoStatusesStore()
 
-const isLoading = computed(() => todosStore.isProcessing || todoStatusesStore.isProcessing)
+const isLoading = computed(() => todosStore.isProcessing === 'get-all' || todoStatusesStore.isProcessing === 'get-all')
 
 const displayedDates = computed<Date[]>(() => {
     // TODO find good way to handle utc

@@ -3,6 +3,7 @@ import logoName from '@/assets/logo_name.svg'
 import NavBar from '@/components/layout/NavBar.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import BottomDrawer from '@/components/BottomDrawer.vue'
+import Toast from '@/features/Toast.vue'
 
 const { logout, isAuthenticated, user } = useAuth0()
 const handleLogout = () => {
@@ -27,9 +28,14 @@ const handleLogout = () => {
             <NavBar></NavBar>
         </div>
         <div class="px-4 pt-1 pb-5 overflow-y-scroll flex-grow">
-            <router-view></router-view>
+            <router-view v-slot="{ Component, route }">
+                <transition name="fade" mode="out-in">
+                    <component :is="Component" :key="route.path" class="bg-white"  />
+                </transition>
+            </router-view>
         </div>
         <BottomDrawer></BottomDrawer>
+        <Toast/>
     </div>
 </template>
 

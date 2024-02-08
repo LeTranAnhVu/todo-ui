@@ -20,7 +20,7 @@ const useAppStore = defineStore('app-settings', () => {
         window.setTimeout(() => {
             bottomDrawer.component = null
             bottomDrawer.props = null
-        }, 300)
+        }, 250)
     }
 
     return { bottomDrawer, closeBottomDrawer }
