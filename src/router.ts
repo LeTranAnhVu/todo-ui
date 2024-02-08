@@ -15,7 +15,7 @@ const routes = [
         redirect: { name: 'daily' },
         children: [
             { path: 'daily', component: DailyPage, name: 'daily' },
-            { path: 'tasks', component: TaskPage, name: 'tasks' },
+            { path: 'tasks', component: TaskPage, name: 'tasks' }
         ]
     },
     { path: '/:pathMatch(.*)', component: NotFoundPage }
@@ -27,11 +27,16 @@ export const router = createRouter({
 })
 
 router.beforeEach((to) => {
-    const { isAuthenticated } = useAuth0()
+    const { isAuthenticated, isLoading } = useAuth0()
     const isAuthenticatedValue = isAuthenticated.value
+    if (isLoading) {
+        return
+    }
+
     if (to.name !== 'login' && !isAuthenticatedValue) {
         return { name: 'login' }
     } else if (to.name === 'login' && isAuthenticatedValue) {
+        console.log('here')
         return { name: 'home' }
     }
 })
