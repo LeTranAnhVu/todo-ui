@@ -4,12 +4,6 @@ import useAppStore from '@/lib/stores/useAppStore.ts'
 
 const appStore = useAppStore()
 const state = computed(() => appStore.bottomDrawer)
-const close = () => {
-    appStore.bottomDrawer.isOpened = false
-    // reset states
-    appStore.bottomDrawer.component = null
-    appStore.bottomDrawer.props = null
-}
 </script>
 
 <template>
@@ -19,13 +13,15 @@ const close = () => {
                 icon="fa-regular fa-circle-xmark"
                 size="lg"
                 class="closeIcon"
-                @click="close" />
+                @click="appStore.closeBottomDrawer()" />
         </div>
         <div id="drawer-bottom">
             <component
                 :is="state.component"
                 v-if="state.component"
                 v-bind="state.props"
+                @done="appStore.closeBottomDrawer()"
+                @cancel="appStore.closeBottomDrawer()"
             ></component>
         </div>
     </div>

@@ -39,6 +39,7 @@ const genTmpId = () => `TMP_${uuidv4()}`
 const isTmpId = (id: string) => id.startsWith('TMP_')
 const whatIsRepeatableType = (isRepeated: boolean): RepeatableType => isRepeated ? RepeatableType.Daily : RepeatableType.Once
 
+const emits = defineEmits(['done'])
 const props = withDefaults(defineProps<TaskEditorProps>(), {
     operation: 'create',
     initialTodoForm: () => ({
@@ -165,6 +166,7 @@ const createTodo = async () => {
 
         await todoStore.createTodo(dto)
         isLoading.value = false
+        emits('done')
     } else {
         console.error('Validation failed')
     }
@@ -187,6 +189,7 @@ const updateTodo = async () => {
 
         await todoStore.updateTodo(todoForm.id, dto)
         isLoading.value = false
+        emits('done')
     } else {
         console.error('Validation failed')
     }
