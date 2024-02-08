@@ -2,6 +2,7 @@
 import logoName from '@/assets/logo_name.svg'
 import NavBar from '@/components/layout/NavBar.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
+import BottomDrawer from '@/components/BottomDrawer.vue'
 
 const { logout, isAuthenticated, user } = useAuth0()
 const handleLogout = () => {
@@ -10,7 +11,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-    <div class="flex-col w-full">
+    <div class="flex flex-col pt-5 w-full max-w-[450px] mx-auto h-screen overflow-hidden relative">
         <div class="header flex px-4 justify-between">
             <div class="buffer">
                 <img v-if="isAuthenticated" :src="user?.picture" alt="" class="h-10 w-10 rounded-full ring-black">
@@ -25,9 +26,10 @@ const handleLogout = () => {
         <div class="px-[50px] mb-10">
             <NavBar></NavBar>
         </div>
-        <div class="px-4">
+        <div class="px-4 pt-1 pb-5 overflow-y-scroll flex-grow">
             <router-view></router-view>
         </div>
+        <BottomDrawer></BottomDrawer>
     </div>
 </template>
 
