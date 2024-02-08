@@ -2,7 +2,13 @@
 import { v4 as uuidv4 } from 'uuid'
 import Checkbox from '@/components/Checkbox.vue'
 import { reactive, ref, toRefs, watch } from 'vue'
-import { CreateSubTodoDto, CreateTodoDto, useTodosStore } from '@/lib/stores/useTodosStore.ts'
+import {
+    CreateSubTodoDto,
+    CreateTodoDto,
+    UpdateTodoDto,
+    UpsertNestedSubTodoDto,
+    useTodosStore
+} from '@/lib/stores/useTodosStore.ts'
 import { RepeatableType } from '@/lib/enums/RepeatableType.ts'
 import dayjs from 'dayjs'
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
@@ -15,7 +21,7 @@ const dateFormat = 'DD MMM YYYY'
 
 export type SubTodoForm = Omit<TodoForm, 'subTodos' | 'startDate' | 'endDate'>
 export type TodoForm = {
-    id?: string
+    id: string | null
     isRepeated: boolean
     name: string
     subTodos: SubTodoForm[]
@@ -28,9 +34,14 @@ export type TaskEditorProps = {
     initialTodoForm?: TodoForm
 }
 
+const genTmpId = () =>  `TMP_${uuidv4()}`
+const isTmpId = (id: string) => id.startsWith('TMP_')
+const whatIsRepeatableType = (isRepeated: boolean): RepeatableType => isRepeated ? RepeatableType.Daily : RepeatableType.Once
+
 const props = withDefaults(defineProps<TaskEditorProps>(), {
     operation: 'create',
     initialTodoForm: () => ({
+        id: null,
         isRepeated: false,
         name: '',
         subTodos: [],
@@ -57,15 +68,17 @@ const dateFormatter = {
     date: dateFormat,
     month: 'MMM'
 }
+
 const addNewSubTodo = () => {
     todoForm.subTodos.push({
-        id: `TMP_${uuidv4()}`,
+        id: genTmpId(),
         name: '',
         isRepeated: recentTodoRepeatType.value
     })
 }
 
-const deleteSubTodo = (id?: string) => {
+
+const deleteSubTodo = (id: string | null) => {
     const idx = todoForm.subTodos.findIndex(t => t.id === id)
     todoForm.subTodos.splice(idx, 1)
 }
@@ -133,33 +146,41 @@ const createTodo = async () => {
         const mapSubTodo = (form: SubTodoForm): CreateSubTodoDto => {
             return {
                 name: form.name,
-                repeatableType: form.isRepeated ? RepeatableType.Daily : RepeatableType.Once
+                repeatableType: whatIsRepeatableType(form.isRepeated)
             }
         }
 
         const dto: CreateTodoDto = {
             name: todoForm.name,
             subTodos: todoForm.subTodos.map(mapSubTodo),
-            repeatableType: todoForm.isRepeated ? RepeatableType.Daily : RepeatableType.Once,
+            repeatableType: whatIsRepeatableType(todoForm.isRepeated),
             startDate: toDateOnly(startDateField.value[0]),
             endDate: todoForm.isRepeated && endDateField.value.length !== 0 ? toDateOnly(endDateField.value[0]) : null
         }
 
         const todoStore = useTodosStore()
 
-        if (operation.value === 'create') {
-            await todoStore.createTodo(dto)
-        } else if (operation.value === 'update') {
-            console.log('updating', dto)
-        }
+        await todoStore.createTodo(dto)
     } else {
         console.error('Validation failed')
     }
 }
 
 const updateTodo = async () => {
-    if(validate()) {
+    if (validate() && todoForm.id && !isTmpId(todoForm.id)) {
+        const todoStore = useTodosStore()
 
+        const mapUpsertSubTodo = (subForm: SubTodoForm): UpsertNestedSubTodoDto => ({
+            name: subForm.name,
+            id: subForm.id && !isTmpId(subForm.id) ? subForm.id : null,
+            repeatableType: whatIsRepeatableType(subForm.isRepeated)
+        })
+        const dto: UpdateTodoDto = {
+            name: todoForm.name,
+            subTodos: todoForm.subTodos.map(mapUpsertSubTodo)
+        }
+
+        await todoStore.updateTodo(todoForm.id, dto)
     } else {
         console.error('Validation failed')
     }
@@ -241,8 +262,9 @@ const updateTodo = async () => {
                     {{ formErrors.subTodos[subTodo?.id || 'unknown']?.[1] }} </span>
                     </div>
                     <Checkbox
+                        v-if="todoForm.isRepeated"
                         v-model="subTodo.isRepeated"
-                        :disabled="operation==='update'"
+                        :disabled="!!(operation==='update' && subTodo.id && !isTmpId(subTodo.id))"
                         label="Repeat daily:" />
 
                     <Icon

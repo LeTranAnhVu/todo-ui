@@ -15,8 +15,15 @@ export type CreateTodoDto = {
     endDate: DateOnly | null
 }
 
+export type UpsertNestedSubTodoDto = {
+    name: string
+    id: string | null
+    repeatableType: RepeatableType | null
+}
+
 export type UpdateTodoDto = {
     name: string
+    subTodos: UpsertNestedSubTodoDto[]
 }
 
 export const useTodosStore = defineStore('todos', () => {
