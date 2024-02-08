@@ -15,8 +15,12 @@ const useAppStore = defineStore('app-settings', () => {
 
     const closeBottomDrawer = () => {
         bottomDrawer.isOpened = false
-        bottomDrawer.component = null
-        bottomDrawer.props = null
+
+        // Has some delay to make the transition smoother
+        window.setTimeout(() => {
+            bottomDrawer.component = null
+            bottomDrawer.props = null
+        }, 300)
     }
 
     return { bottomDrawer, closeBottomDrawer }

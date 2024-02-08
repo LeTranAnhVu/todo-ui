@@ -7,6 +7,7 @@ const state = computed(() => appStore.bottomDrawer)
 </script>
 
 <template>
+    <div v-if="state.isOpened" class="overlay" @click="appStore.closeBottomDrawer()"></div>
     <div class="drawerB" :data-opened="state.isOpened">
         <div class="ml-auto">
             <Icon
@@ -29,18 +30,28 @@ const state = computed(() => appStore.bottomDrawer)
 
 <style scoped lang="scss">
 .drawerB {
-    @apply bg-gray-200
-    absolute -bottom-[100%] left-0 right-0 p-3 max-h-[600px]
+    @apply bg-white
+    absolute bottom-0 left-0 right-0
+    translate-y-[100%]
+    p-3 max-h-[600px]
     overflow-auto
     rounded-t-2xl
     z-[999]
-    transition-all duration-300 ease-in-out;
+    transition-transform duration-[200ms] ease-in-out;
     &[data-opened=true] {
-        @apply bottom-0;
+        @apply translate-y-0;
     }
 
     .closeIcon {
         @apply block ml-auto;
     }
 }
+
+.overlay {
+    @apply block
+    absolute top-0 left-0 right-0 bottom-0
+    content-[""]
+    z-[998] bg-gray-500 opacity-40;
+}
+
 </style>
