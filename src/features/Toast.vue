@@ -17,7 +17,7 @@ watch(() => feed.message, () => {
 
 <template>
     <div class="toast">
-        <Transition name="slide-fade">
+        <Transition name="fade-up">
             <div v-if="feed.message" class="message">
                 <div class="icon-wrapper">
                     <Icon v-if="feed.type === 'error'" icon="fa-solid fa-triangle-exclamation" />
@@ -31,7 +31,7 @@ watch(() => feed.message, () => {
 
 <style scoped>
 .toast {
-    @apply absolute bottom-2 left-0 right-0 z-[900];
+    @apply absolute top-2 left-0 right-0 z-[900];
 
     .message {
         @apply ring-1 ring-black rounded p-2 m-auto w-fit bg-white
