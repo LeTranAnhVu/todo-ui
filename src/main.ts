@@ -32,7 +32,7 @@ app.use(createAuth0({
     clientId: import.meta.env.VITE_AUTH_CLIENT_ID,
     cacheLocation: 'localstorage',
     authorizationParams: {
-        redirect_uri: window.location.origin,
+        redirect_uri: import.meta.env.VITE_AUTH_REDIRECT_URL,
         audience: import.meta.env.VITE_AUTH_AUD
     }
 }))
