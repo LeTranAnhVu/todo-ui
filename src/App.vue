@@ -21,7 +21,7 @@ watch([isAuthenticated, isLoading], async () => {
     }
 })
 
-watch(route, (from, to) => {
+watch(route, (_, to) => {
     if (to.name !== 'login' && !isAuthenticated.value) {
         router.push({ name: 'login' })
     } else if (to.name === 'login' && isAuthenticated.value) {
