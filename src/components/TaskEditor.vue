@@ -58,7 +58,7 @@ const todoForm = reactive<TodoForm>({ ...initialTodoForm.value })
 const startDateField = ref<string[]>(todoForm.startDate ? [dayjs(todoForm.startDate).format(dateFormat)] : [dayjs().format(dateFormat)])
 const endDateField = ref<string[]>(todoForm.endDate ? [dayjs(todoForm.endDate).format(dateFormat)] : [])
 const recentTodoRepeatType = ref<boolean>(todoForm.isRepeated)
-const isLoading = computed(() => useTodosStore().isProcessing)
+const isLoading = computed(() => !!useTodosStore().isProcessing)
 watch(() => todoForm.isRepeated, (newVal) => {
     recentTodoRepeatType.value = newVal
 })
