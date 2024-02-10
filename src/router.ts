@@ -1,4 +1,4 @@
-import DailyPage from '@/pages/DailyPage.vue'
+import HomePage from '@/pages/HomePage.vue'
 import TaskPage from '@/pages/TaskPage.vue'
 import LoginPage from '@/pages/LoginPage.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
@@ -6,14 +6,14 @@ import Layout from '@/components/layout/Layout.vue'
 import NotFoundPage from '@/pages/NotFoundPage.vue'
 
 const routes = [
-    { path: '/', redirect: { name: 'daily' }, name: 'home' },
+    { path: '/', redirect: { name: 'home' }, name: 'root' },
     { path: '/login', component: LoginPage, name: 'login' },
     {
         path: '/app',
         component: Layout,
-        redirect: { name: 'daily' },
+        redirect: { name: 'home' },
         children: [
-            { path: 'daily', component: DailyPage, name: 'daily' },
+            { path: 'home', component: HomePage, name: 'home' },
             { path: 'tasks', component: TaskPage, name: 'tasks' }
         ]
     },

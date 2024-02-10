@@ -4,8 +4,8 @@
 
 <template>
     <div class="navbar">
-        <router-link :to="{name: 'daily'}" class="navbar-item">
-            Daily
+        <router-link :to="{name: 'home'}" class="navbar-item">
+            Home
         </router-link>
         <router-link disabled to="/reports" class="navbar-item">
             Reports
