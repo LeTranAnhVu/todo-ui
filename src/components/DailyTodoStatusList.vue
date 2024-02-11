@@ -3,6 +3,8 @@ import TodoStatusItem from '@/components/TodoStatusItem.vue'
 import { computed, toRefs } from 'vue'
 import { DateTime } from 'luxon'
 import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
+import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
+import { DisplayedTodoStatusDto } from '@/lib/types/DisplayedTodoStatusDto.ts'
 
 type Props = {
     date: Date
@@ -23,6 +25,22 @@ const relativeDay = computed(() => {
 
 const displayDay = computed(() => luxonDt.value.toFormat('d LLL yy'))
 const todos = useTodosStore().todos
+
+const todoStatusStore = useTodoStatusesStore()
+const todoStatuses = computed(() => todos.map(todo => todoStatusStore.getTodoStatusByDay(todo, date.value)).filter((stt): stt is DisplayedTodoStatusDto => !!stt))
+const subTodoStatuses = computed(() => {
+    const obj: Record<string, DisplayedTodoStatusDto[]> = {}
+    for (const todo of todos) {
+       if(!todo.subTodos.length) {
+           continue
+       }
+
+       obj[todo.id] = todo.subTodos.map(std => todoStatusStore.getTodoStatusByDay(std, date.value)).filter((stt): stt is DisplayedTodoStatusDto => !!stt)
+    }
+
+    return obj
+})
+
 </script>
 
 <template>
@@ -35,10 +53,11 @@ const todos = useTodosStore().todos
         </div>
         <div class="todos">
             <TodoStatusItem
-                v-for="todo in todos"
-                :key="todo.id"
-                :date="date"
-                :todo="todo" />
+                v-for="todoStatus in todoStatuses"
+                :key="todoStatus.todoId || ''"
+                :todo-status="todoStatus"
+                :sub-todo-statuses="subTodoStatuses[todoStatus.todoId || ''] || []"
+            />
         </div>
     </div>
 </template>

@@ -1,22 +1,17 @@
 <script setup lang="ts">
 import { computed, ref, toRefs } from 'vue'
 import Checkbox from '@/components/Checkbox.vue'
-import { TodoDto } from '@/lib/types/TodoDto.ts'
 import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
 import { DisplayedTodoStatusDto } from '@/lib/types/DisplayedTodoStatusDto.ts'
 
 type Props = {
-    todo: TodoDto
-    date: Date
+    todoStatus: DisplayedTodoStatusDto
+    subTodoStatuses: DisplayedTodoStatusDto[]
 }
 
 const props = defineProps<Props>()
-const { todo, date } = toRefs<Props>(props)
+const { todoStatus, subTodoStatuses } = toRefs<Props>(props)
 const todoStatusStore = useTodoStatusesStore()
-const todoStatus = computed<DisplayedTodoStatusDto | null>(() => todoStatusStore.getTodoStatusByDay(todo.value, date.value))
-const subTodoStatuses = computed<DisplayedTodoStatusDto[]>(() => todo.value.subTodos
-    .map(std => todoStatusStore.getTodoStatusByDay(std, date.value))
-    .filter((stds): stds is DisplayedTodoStatusDto => stds !== null))
 
 const completedSubTodos = computed(() => subTodoStatuses.value.filter(stds => stds.isCompleted))
 const allSubTodosCompleted = computed(() => subTodoStatuses.value.length === completedSubTodos.value.length)

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import TodoStatusList from '@/components/TodoStatusList.vue'
+import DailyTodoStatusList from '@/components/DailyTodoStatusList.vue'
 import Spinner from '@/components/Spinner.vue'
 import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
 import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { addDays } from '@/lib/helpers/addDays.ts'
 import { parseUTCDate } from '@/lib/helpers/parseUTCDate.ts'
+import Switch from '@/components/Switch.vue'
 
 const todosStore = useTodosStore()
 const todoStatusesStore = useTodoStatusesStore()
@@ -15,9 +16,9 @@ const isLoading = computed(() => todosStore.isProcessing === 'get-all' || todoSt
 const displayedDates = computed<Date[]>(() => {
     // TODO find good way to handle utc
     const today = parseUTCDate(new Date().toUTCString())
-    return [...[2, 1].map(offset => addDays(today, offset)), today, ...[-1, -2, -3].map(offset => addDays(today, offset))]
+    return [...[1].map(offset => addDays(today, offset)), today, ...[-1].map(offset => addDays(today, offset))]
 })
-
+const toggle = ref(true)
 </script>
 
 <template>
@@ -28,7 +29,11 @@ const displayedDates = computed<Date[]>(() => {
             </div>
         </template>
         <template v-else>
-            <TodoStatusList
+            <div class="ml-auto">
+                <Switch v-model="toggle" label="Show daily tasks" right />
+
+            </div>
+            <DailyTodoStatusList
                 v-for="date in displayedDates"
                 :key="date.toUTCString()"
                 :date="date" />
