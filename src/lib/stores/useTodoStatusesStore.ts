@@ -25,19 +25,26 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
         // If the todo is available later than the given day,
         //  Or the end day is over 
         //  return null
-        if (isAfterDateOnly(todo.startDate, day) || (todo.endDate && isAfterDateOnly(day, todo.endDate))) {
+        if (isAfterDateOnly(todo.startDate, day)
+            || (todo.endDate && isAfterDateOnly(day, todo.endDate))) {
             return null
         }
 
         // Find the status of given todo at given day if has
         const currentDayStatus: DisplayedTodoStatusDto | undefined = todoStatuses.value
-            .find(stt => isSameDateOnly(stt.occurDate, day)
-                && todo.id === stt.todoId)
+            .find(stt => todo.id === stt.todoId)
 
-        if (currentDayStatus) {
+        if (currentDayStatus && isSameDateOnly(currentDayStatus.occurDate, day)) {
+            currentDayStatus.repeatableType = todo.repeatableType
             return currentDayStatus
+        } else if (currentDayStatus?.isCompleted
+            && todo.repeatableType === RepeatableType.Once
+            && !isSameDateOnly(currentDayStatus.occurDate, day)) {
+            // Don't show the once todo if it has been completed on another day
+            return null
         }
-        
+
+
         const newStatus: DisplayedTodoStatusDto = {
             id: null,
             completedAt: null,
@@ -46,16 +53,27 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
             updatedAt: null,
             todoName: todo.name,
             todoId: todo.id,
-            isCompleted: false
+            isCompleted: false,
+            repeatableType: todo.repeatableType
         }
 
-        if (todo.repeatableType === RepeatableType.Once
-            && !isSameDateOnly(todo.startDate, day)) {
-            // don't return status if it is once time and the day is not the repeatable started at
-            return null
-        }
+        // if (todo.repeatableType === RepeatableType.Once
+        //     && !isSameDateOnly(todo.startDate, day)) {
+        //     // don't return status if it is once time and the day is not the repeatable started at
+        //     return null
+        // }
 
         return newStatus
+    }
+
+    function isCompletedTodo(todo: TodoDto):boolean {
+        if(todo.repeatableType === RepeatableType.Once
+        && todoStatuses.value.some(stt => stt.todoId === todo.id && stt.isCompleted)) {
+
+            return true
+        }
+
+        return false
     }
 
     async function fetchTodoStatuses() {
@@ -84,6 +102,6 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
         isProcessing.value = null
     }
 
-    return { todoStatuses, fetchTodoStatuses, createTodoStatus, getTodoStatusByDay, isProcessing}
+    return { todoStatuses, fetchTodoStatuses, createTodoStatus, getTodoStatusByDay, isProcessing, isCompletedTodo }
 })
 

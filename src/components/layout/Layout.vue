@@ -21,10 +21,10 @@ const handleLogout = () => {
                 <Btn variant="link" @click="handleLogout">Sign out</Btn>
             </div>
         </div>
-        <div class="logo mb-10">
+        <div class="logo mb-6">
             <img class="mx-auto" :src="logoName" alt="">
         </div>
-        <div class="px-[50px] mb-10">
+        <div class="px-[50px] mb-6">
             <NavBar></NavBar>
         </div>
         <div class="px-4 pt-1 pb-5 overflow-y-scroll flex-grow">

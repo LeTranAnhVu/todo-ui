@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import TodoStatusItem from '@/components/TodoStatusItem.vue'
 import { computed, toRefs } from 'vue'
-import { DateTime } from 'luxon'
 import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
 import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
 import { DisplayedTodoStatusDto } from '@/lib/types/DisplayedTodoStatusDto.ts'
@@ -12,18 +11,18 @@ type Props = {
 
 const props = defineProps<Props>()
 const { date } = toRefs(props)
-const luxonDt = computed(() => DateTime.fromJSDate(date.value))
-const relativeDay = computed(() => {
-    let str = luxonDt.value.toRelativeCalendar()
-    if (str) {
-        const firstLetter = str[0].toUpperCase()
-        str = firstLetter + str.substring(1)
-    }
+// const luxonDt = computed(() => DateTime.fromJSDate(date.value))
+// const relativeDay = computed(() => {
+//     let str = luxonDt.value.toRelativeCalendar()
+//     if (str) {
+//         const firstLetter = str[0].toUpperCase()
+//         str = firstLetter + str.substring(1)
+//     }
+//
+//     return str
+// })
 
-    return str
-})
-
-const displayDay = computed(() => luxonDt.value.toFormat('d LLL yy'))
+// const displayDay = computed(() => luxonDt.value.toFormat('d LLL yy'))
 const todos = useTodosStore().todos
 
 const todoStatusStore = useTodoStatusesStore()
@@ -45,12 +44,12 @@ const subTodoStatuses = computed(() => {
 
 <template>
     <div>
-        <div class="mb-3">
-            <p class="text-sm text-gray-700">
-                <span class="text-lg font-medium">{{ relativeDay }}</span>
-                {{ displayDay }}
-            </p>
-        </div>
+<!--        <div class="mb-3">-->
+<!--            <p class="text-sm text-gray-700">-->
+<!--                <span class="text-lg font-medium">{{ relativeDay }}</span>-->
+<!--                {{ displayDay }}-->
+<!--            </p>-->
+<!--        </div>-->
         <div class="todos">
             <TodoStatusItem
                 v-for="todoStatus in todoStatuses"

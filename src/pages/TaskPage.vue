@@ -25,7 +25,6 @@ const openNewTaskDrawer = () => {
         </template>
         <template v-else>
             <div class="absolute bottom-10 right-5 w-[70px]">
-
                 <Btn variant="primary-outline" size="sm" @click="openNewTaskDrawer">New +</Btn>
             </div>
             <TodoList />

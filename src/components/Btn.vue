@@ -50,10 +50,9 @@ const { variant, size } = toRefs(props)
 
     &[data-variant='link'] {
         @apply
-        text-black
-        font-semibold
-        hover:font-bold
-        hover:underline;
+        font-light
+        underline
+        hover:font-bold;
     }
 
     &[data-variant='danger-sim'] {

@@ -17,8 +17,7 @@ import { toDateOnly } from '@/lib/helpers/toDateOnly.ts'
 import { isAfterDateOnly } from '@/lib/helpers/isAfterDateOnly.ts'
 import { DateOnly } from '@/lib/types/DateOnly.ts'
 import LoadingCard from '@/pages/LoadingCard.vue'
-
-const dateFormat = 'DD MMM YYYY'
+import { DATEPICKER_DISPLAY_FORMAT } from '@/lib/constants.ts'
 
 export type SubTodoForm = Omit<TodoForm, 'subTodos' | 'startDate' | 'endDate'>
 export type TodoForm = {
@@ -55,19 +54,19 @@ const props = withDefaults(defineProps<TaskEditorProps>(), {
 const { initialTodoForm, operation } = toRefs(props)
 
 const todoForm = reactive<TodoForm>({ ...initialTodoForm.value })
-const startDateField = ref<string[]>(todoForm.startDate ? [dayjs(todoForm.startDate).format(dateFormat)] : [dayjs().format(dateFormat)])
-const endDateField = ref<string[]>(todoForm.endDate ? [dayjs(todoForm.endDate).format(dateFormat)] : [])
+const startDateField = ref<string[]>(todoForm.startDate ? [dayjs(todoForm.startDate).format(DATEPICKER_DISPLAY_FORMAT)] : [dayjs().format(DATEPICKER_DISPLAY_FORMAT)])
+const endDateField = ref<string[]>(todoForm.endDate ? [dayjs(todoForm.endDate).format(DATEPICKER_DISPLAY_FORMAT)] : [])
 const recentTodoRepeatType = ref<boolean>(todoForm.isRepeated)
 const isLoading = computed(() => !!useTodosStore().isProcessing)
 watch(() => todoForm.isRepeated, (newVal) => {
     recentTodoRepeatType.value = newVal
 })
 const handleSetEndDate = () => {
-    endDateField.value = [dayjs().add(1, 'day').format(dateFormat)]
+    endDateField.value = [dayjs().add(1, 'day').format(DATEPICKER_DISPLAY_FORMAT)]
 
 }
 const dateFormatter = {
-    date: dateFormat,
+    date: DATEPICKER_DISPLAY_FORMAT,
     month: 'MMM'
 }
 
@@ -177,7 +176,9 @@ const updateTodo = async () => {
         const mapUpsertSubTodo = (subForm: SubTodoForm): UpsertNestedSubTodoDto => ({
             name: subForm.name,
             id: subForm.id && !isTmpId(subForm.id) ? subForm.id : null,
-            repeatableType: whatIsRepeatableType(subForm.isRepeated)
+            repeatableType: whatIsRepeatableType(subForm.isRepeated),
+            startDate: null, // TODO should let the user select the date later. Set null mean it will follow the parent atm
+            endDate: null // TODO
         })
         const dto: UpdateTodoDto = {
             name: todoForm.name,

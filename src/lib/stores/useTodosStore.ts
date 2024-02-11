@@ -20,6 +20,8 @@ export type UpsertNestedSubTodoDto = {
     name: string
     id: string | null
     repeatableType: RepeatableType | null
+    startDate: DateOnly | null
+    endDate: DateOnly | null
 }
 
 export type UpdateTodoDto = {

@@ -1,2 +1,3 @@
 
 export const DATE_ONLY_FORMAT = 'YYYY-MM-DD'
+export const DATEPICKER_DISPLAY_FORMAT = 'DD MMM YYYY'
