@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid'
 import Checkbox from '@/components/Checkbox.vue'
-import { computed, reactive, ref, toRefs, watch } from 'vue'
+import { computed, reactive, ref, toRefs } from 'vue'
 import {
     CreateSubTodoDto,
     CreateTodoDto,

@@ -9,10 +9,8 @@ import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
 const isLoading = computed(() => useTodosStore().isProcessing === 'get-all')
 const openNewTaskDrawer = () => {
     const appStore = useAppStore()
-
     appStore.bottomDrawer.isOpened = true
     appStore.bottomDrawer.component = defineAsyncComponent(() => import('@/components/TaskEditor.vue'))
-
 }
 </script>
 
