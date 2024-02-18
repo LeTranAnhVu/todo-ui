@@ -37,7 +37,7 @@ const handleLogout = () => {
                 </transition>
             </router-view>
         </div>
-        <div class="text-center text-sm text-gray-400">v1.0.1</div>
+        <div class="text-center text-sm text-gray-400">v1.0.2</div>
 
         <BottomDrawer></BottomDrawer>
         <Toast />
