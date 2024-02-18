@@ -5,9 +5,30 @@ import { useAuth0 } from '@auth0/auth0-vue'
 import BottomDrawer from '@/components/BottomDrawer.vue'
 import Toast from '@/features/Toast.vue'
 import useAppStore from '@/lib/stores/useAppStore.ts'
+import { useSwipe } from '@vueuse/core'
+import { ref, watch } from 'vue'
+import { router } from '@/router.ts'
 
 const { logout, isAuthenticated, user } = useAuth0()
 const app = useAppStore()
+
+const mainDiv = ref<HTMLDivElement | null>(null)
+const { isSwiping, direction } = useSwipe(mainDiv)
+
+watch([isSwiping, direction], ([newIsSwiping, newDirection], [prevIsSwiping, _]) => {
+    if (!newIsSwiping && prevIsSwiping && newDirection !== 'none') {
+        if (newDirection === 'right') {
+            // go to tasks
+            router.push({ name: 'tasks' })
+            return
+        }
+        if (newDirection === 'left') {
+            router.push({ name: 'home' })
+            return
+        }
+    }
+})
+
 const handleLogout = () => {
     logout()
 }
@@ -30,14 +51,14 @@ const handleLogout = () => {
         <div class="px-[50px] mb-6">
             <NavBar></NavBar>
         </div>
-        <div class="px-4 pt-1 pb-5 overflow-y-scroll flex-grow relative">
+        <div ref="mainDiv" class="px-4 pt-1 pb-5 overflow-y-scroll flex-grow relative">
             <router-view v-slot="{ Component, route }">
                 <transition :name="app.transitionDirection">
                     <component :is="Component" :key="route.path" class="bg-white" />
                 </transition>
             </router-view>
         </div>
-        <div class="text-center text-sm text-gray-400">v1.0.2</div>
+        <div class="text-center text-sm text-gray-400">v1.0.3</div>
 
         <BottomDrawer></BottomDrawer>
         <Toast />

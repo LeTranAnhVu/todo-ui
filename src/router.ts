@@ -35,6 +35,5 @@ router.beforeEach((to, from) => {
     } else {
         appSettings.transitionDirection = 'slide-ltr'
     }
-    console.log('waht', appSettings.transitionDirection, from.meta?.ltrIndex, to.meta?.ltrIndex)
 
 })
