@@ -56,11 +56,7 @@ const { initialTodoForm, operation } = toRefs(props)
 const todoForm = reactive<TodoForm>({ ...initialTodoForm.value })
 const startDateField = ref<string[]>(todoForm.startDate ? [dayjs(todoForm.startDate).format(DATEPICKER_DISPLAY_FORMAT)] : [dayjs().format(DATEPICKER_DISPLAY_FORMAT)])
 const endDateField = ref<string[]>(todoForm.endDate ? [dayjs(todoForm.endDate).format(DATEPICKER_DISPLAY_FORMAT)] : [])
-const recentTodoRepeatType = ref<boolean>(todoForm.isRepeated)
 const isLoading = computed(() => !!useTodosStore().isProcessing)
-watch(() => todoForm.isRepeated, (newVal) => {
-    recentTodoRepeatType.value = newVal
-})
 const handleSetEndDate = () => {
     endDateField.value = [dayjs().add(1, 'day').format(DATEPICKER_DISPLAY_FORMAT)]
 
@@ -74,7 +70,7 @@ const addNewSubTodo = () => {
     todoForm.subTodos.push({
         id: genTmpId(),
         name: '',
-        isRepeated: recentTodoRepeatType.value
+        isRepeated: false
     })
 }
 
