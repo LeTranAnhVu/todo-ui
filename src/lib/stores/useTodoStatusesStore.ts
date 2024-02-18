@@ -17,33 +17,48 @@ export type CreateTodoStatusDto = {
     occurDate: DateOnly
 }
 
-export const useTodoStatusesStore = defineStore('todoStatuses', () => {
-    const todoStatuses = ref<TodoStatusDto[]>([])
-    const isProcessing = ref<'get-all' | 'create' | null>(null)
+export function getTodoStatusByDay(todos: TodoDto[] | SubTodoDto[], todoStatuses: TodoStatusDto[], day: Date): DisplayedTodoStatusDto[] {
+    const statuses: DisplayedTodoStatusDto[] = []
+    for (const todo of todos) {
 
-    function getTodoStatusByDay(todo: TodoDto | SubTodoDto, day: Date): DisplayedTodoStatusDto | null {
         // If the todo is available later than the given day,
-        //  Or the end day is over 
+        //  Or the end day is over
         //  return null
         if (isAfterDateOnly(todo.startDate, day)
             || (todo.endDate && isAfterDateOnly(day, todo.endDate))) {
-            return null
+            continue
         }
+
 
         // Find the status of given todo at given day if has
-        const currentDayStatus: DisplayedTodoStatusDto | undefined = todoStatuses.value
-            .find(stt => todo.id === stt.todoId)
+        const currentTodoStatuses: DisplayedTodoStatusDto[] = todoStatuses
+            .filter(stt => todo.id === stt.todoId)
 
-        if (currentDayStatus && isSameDateOnly(currentDayStatus.occurDate, day)) {
-            currentDayStatus.repeatableType = todo.repeatableType
-            return currentDayStatus
-        } else if (currentDayStatus?.isCompleted
-            && todo.repeatableType === RepeatableType.Once
-            && !isSameDateOnly(currentDayStatus.occurDate, day)) {
-            // Don't show the once todo if it has been completed on another day
-            return null
+
+        if (todo.repeatableType === RepeatableType.Once) {
+            if (currentTodoStatuses.length > 1) {
+                console.error('something went wrong, cannot have two status for once', todo.id, todo.name)
+                continue
+            }
+
+            if (currentTodoStatuses[0]) {
+                // add existing one if it is same day or it is not completed yet
+                if (isSameDateOnly(currentTodoStatuses[0].occurDate, day) || !currentTodoStatuses[0].isCompleted) {
+                    currentTodoStatuses[0].repeatableType = todo.repeatableType
+                    statuses.push(currentTodoStatuses[0])
+                }
+
+                continue
+            }
+
+        } else if (todo.repeatableType === RepeatableType.Daily && currentTodoStatuses.length > 0) {
+            const sameDayTodoStatus = currentTodoStatuses.find(stt => isSameDateOnly(stt.occurDate, day))
+            if (sameDayTodoStatus) {
+                sameDayTodoStatus.repeatableType = todo.repeatableType
+                statuses.push(sameDayTodoStatus)
+                continue
+            }
         }
-
 
         const newStatus: DisplayedTodoStatusDto = {
             id: null,
@@ -57,18 +72,19 @@ export const useTodoStatusesStore = defineStore('todoStatuses', () => {
             repeatableType: todo.repeatableType
         }
 
-        // if (todo.repeatableType === RepeatableType.Once
-        //     && !isSameDateOnly(todo.startDate, day)) {
-        //     // don't return status if it is once time and the day is not the repeatable started at
-        //     return null
-        // }
-
-        return newStatus
+        statuses.push(newStatus)
     }
 
-    function isCompletedTodo(todo: TodoDto):boolean {
-        if(todo.repeatableType === RepeatableType.Once
-        && todoStatuses.value.some(stt => stt.todoId === todo.id && stt.isCompleted)) {
+    return statuses
+}
+
+export const useTodoStatusesStore = defineStore('todoStatuses', () => {
+    const todoStatuses = ref<TodoStatusDto[]>([])
+    const isProcessing = ref<'get-all' | 'create' | null>(null)
+
+    function isCompletedTodo(todo: TodoDto): boolean {
+        if (todo.repeatableType === RepeatableType.Once
+            && todoStatuses.value.some(stt => stt.todoId === todo.id && stt.isCompleted)) {
 
             return true
         }

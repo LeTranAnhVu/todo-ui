@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import TodoStatusItem from '@/components/TodoStatusItem.vue'
-import { computed, toRefs } from 'vue'
+import { computed, toRefs, watch } from 'vue'
 import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
-import { useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
+import { getTodoStatusByDay, useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
 import { DisplayedTodoStatusDto } from '@/lib/types/DisplayedTodoStatusDto.ts'
 
 type Props = {
@@ -26,7 +26,9 @@ const { date } = toRefs(props)
 const todos = useTodosStore().todos
 
 const todoStatusStore = useTodoStatusesStore()
-const todoStatuses = computed(() => todos.map(todo => todoStatusStore.getTodoStatusByDay(todo, date.value)).filter((stt): stt is DisplayedTodoStatusDto => !!stt))
+const todoStatuses = computed(() => {
+    return getTodoStatusByDay(todos,todoStatusStore.todoStatuses, date.value)
+})
 const subTodoStatuses = computed(() => {
     const obj: Record<string, DisplayedTodoStatusDto[]> = {}
     for (const todo of todos) {
@@ -34,7 +36,7 @@ const subTodoStatuses = computed(() => {
            continue
        }
 
-       obj[todo.id] = todo.subTodos.map(std => todoStatusStore.getTodoStatusByDay(std, date.value)).filter((stt): stt is DisplayedTodoStatusDto => !!stt)
+       obj[todo.id] = getTodoStatusByDay(todo.subTodos, todoStatusStore.todoStatuses, date.value)
     }
 
     return obj
