@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, watch } from 'vue'
 import './style.css'
 import App from './App.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -17,6 +17,7 @@ import Btn from '@/components/Btn.vue'
 import createApiFetch from '@/lib/createApiFetch.ts'
 import { createPinia } from 'pinia'
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
+import { useServiceWorker } from '@/useServiceWorker.ts'
 
 library.add(faUserSecret, faAngleLeft, faCircleXmark, faTrash, faPen, faCircleCheck, faTriangleExclamation)
 
@@ -52,4 +53,16 @@ const pinia = createPinia()
 app.use(pinia)
 
 app.use(VueTailwindDatepicker)
+
+const { appNeedsRefresh } = useServiceWorker()
+watch(appNeedsRefresh, async (val) => {
+    console.log('Does app need refresh? ' + val)
+    if (val) {
+        // if (confirm('App updated. Do you want to refresh?')) {
+        location.reload()
+        // }
+    }
+}, { immediate: true })
+
+
 app.mount('#app')
