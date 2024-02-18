@@ -1,16 +1,22 @@
 <script setup lang="ts">
 
+import useAppStore from '@/lib/stores/useAppStore.ts'
+
+const app = useAppStore()
+const swipeTo = (dir: 'ltr' | 'rtl') => {
+    app.transitionDirection = dir === 'ltr' ? 'slide-ltr' : 'slide-rtl'
+}
 </script>
 
 <template>
     <div class="navbar">
-        <router-link :to="{name: 'home'}" class="navbar-item">
+        <router-link :to="{name: 'home'}" class="navbar-item" @click="() => swipeTo('rtl')">
             Home
         </router-link>
         <router-link disabled to="/reports" class="navbar-item">
             Reports
         </router-link>
-        <router-link :to="{name: 'tasks'}" class="navbar-item">
+        <router-link :to="{name: 'tasks'}" class="navbar-item"  @click="() => swipeTo('ltr')">
             Tasks
         </router-link>
     </div>

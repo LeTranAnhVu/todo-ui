@@ -8,23 +8,30 @@ import useAppStore from '@/lib/stores/useAppStore.ts'
 import { useSwipe } from '@vueuse/core'
 import { ref, watch } from 'vue'
 import { router } from '@/router.ts'
+import { useRoute } from 'vue-router'
 
 const { logout, isAuthenticated, user } = useAuth0()
 const app = useAppStore()
+const route = useRoute()
 
 const mainDiv = ref<HTMLDivElement | null>(null)
 const { isSwiping, direction } = useSwipe(mainDiv)
 
 watch([isSwiping, direction], ([newIsSwiping, newDirection], [prevIsSwiping, _]) => {
     if (!newIsSwiping && prevIsSwiping && newDirection !== 'none') {
-        if (newDirection === 'right') {
-            // go to tasks
-            router.push({ name: 'tasks' })
-            return
+        if(newDirection === 'left') {
+            app.transitionDirection = 'slide-rtl'
+        } else {
+            app.transitionDirection = 'slide-ltr'
         }
-        if (newDirection === 'left') {
+
+        if (route.name === 'home') {
+            router.push({ name: 'tasks' })
+        }
+
+        if (route.name === 'tasks') {
+
             router.push({ name: 'home' })
-            return
         }
     }
 })
@@ -58,7 +65,7 @@ const handleLogout = () => {
                 </transition>
             </router-view>
         </div>
-        <div class="text-center text-sm text-gray-400">v1.0.3</div>
+        <div class="text-center text-sm text-gray-400">v1.0.4</div>
 
         <BottomDrawer></BottomDrawer>
         <Toast />

@@ -4,7 +4,6 @@ import LoginPage from '@/pages/LoginPage.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Layout from '@/components/layout/Layout.vue'
 import NotFoundPage from '@/pages/NotFoundPage.vue'
-import useAppStore from '@/lib/stores/useAppStore.ts'
 
 const routes = [
     { path: '/', redirect: { name: 'home' }, name: 'root' },
@@ -14,8 +13,8 @@ const routes = [
         component: Layout,
         redirect: { name: 'home' },
         children: [
-            { path: 'home', component: HomePage, name: 'home', meta: { ltrIndex: 1 } },
-            { path: 'tasks', component: TaskPage, name: 'tasks', meta: { ltrIndex: 2 } }
+            { path: 'home', component: HomePage, name: 'home' },
+            { path: 'tasks', component: TaskPage, name: 'tasks' }
         ]
     },
     { path: '/:pathMatch(.*)', component: NotFoundPage }
@@ -24,16 +23,4 @@ const routes = [
 export const router = createRouter({
     history: createWebHashHistory(),
     routes
-})
-
-router.beforeEach((to, from) => {
-    const appSettings = useAppStore()
-    if (typeof from.meta?.ltrIndex === 'number'
-        && typeof to.meta?.ltrIndex === 'number'
-        && from.meta.ltrIndex > to.meta.ltrIndex) {
-        appSettings.transitionDirection = 'slide-rtl'
-    } else {
-        appSettings.transitionDirection = 'slide-ltr'
-    }
-
 })
