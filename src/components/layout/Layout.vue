@@ -18,10 +18,10 @@ const mainDiv = ref<HTMLDivElement | null>(null)
 const { isSwiping, direction } = useSwipe(mainDiv)
 
 watch([isSwiping, direction], ([newIsSwiping, newDirection], [prevIsSwiping, _]) => {
-    if (!newIsSwiping && prevIsSwiping && newDirection !== 'none') {
-        if(newDirection === 'left') {
+    if (!newIsSwiping && prevIsSwiping && ['left', 'right'].includes(newDirection)) {
+        if (newDirection === 'left') {
             app.transitionDirection = 'slide-rtl'
-        } else {
+        } else if (newDirection === 'right') {
             app.transitionDirection = 'slide-ltr'
         }
 
@@ -65,7 +65,7 @@ const handleLogout = () => {
                 </transition>
             </router-view>
         </div>
-        <div class="text-center text-sm text-gray-400">v1.0.4</div>
+        <div class="text-center text-sm text-gray-400">v1.0.6</div>
 
         <BottomDrawer></BottomDrawer>
         <Toast />
