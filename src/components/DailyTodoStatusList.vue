@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TodoStatusItem from '@/components/TodoStatusItem.vue'
-import { computed, toRefs, watch } from 'vue'
+import { computed, toRefs } from 'vue'
 import { useTodosStore } from '@/lib/stores/useTodosStore.ts'
 import { getTodoStatusByDay, useTodoStatusesStore } from '@/lib/stores/useTodoStatusesStore.ts'
 import { DisplayedTodoStatusDto } from '@/lib/types/DisplayedTodoStatusDto.ts'
