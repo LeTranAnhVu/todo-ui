@@ -4,7 +4,7 @@
 
 /*transition*/
 
-/* slide fade */
+/* fade up */
 .fade-up-enter-active {
     transition: all 0.3s ease-out;
 }
@@ -28,4 +28,61 @@
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
+}
+
+
+.slide-ltr-enter-active,
+.slide-ltr-leave-active,
+.slide-rtl-enter-active,
+.slide-rtl-leave-active{
+    transition: all 0.25s linear;
+}
+
+.slide-rtl-enter-from {
+    position: absolute;
+    right: -100%;
+    opacity: 0;
+}
+
+.slide-rtl-enter-to {
+    position: absolute;
+    right: 0;
+    opacity: 1;
+}
+
+.slide-rtl-leave-from {
+    position: absolute;
+    left: 0;
+    opacity: 1;
+}
+
+.slide-rtl-leave-to {
+    position: absolute;
+    left: -100%;
+    opacity: 0;
+}
+
+/* left to right */
+.slide-ltr-enter-from {
+    position: absolute;
+    left: -100%;
+    opacity: 0;
+}
+
+.slide-ltr-enter-to {
+    position: absolute;
+    left: 0;
+    opacity: 1;
+}
+
+.slide-ltr-leave-to {
+    position: absolute;
+    right: -100%;
+    opacity: 0;
+}
+
+.slide-ltr-leave-from {
+    position: absolute;
+    right: 0;
+    opacity: 1;
 }

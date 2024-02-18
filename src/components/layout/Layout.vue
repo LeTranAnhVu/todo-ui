@@ -4,11 +4,14 @@ import NavBar from '@/components/layout/NavBar.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import BottomDrawer from '@/components/BottomDrawer.vue'
 import Toast from '@/features/Toast.vue'
+import useAppStore from '@/lib/stores/useAppStore.ts'
 
 const { logout, isAuthenticated, user } = useAuth0()
+const app = useAppStore()
 const handleLogout = () => {
     logout()
 }
+
 </script>
 
 <template>
@@ -29,15 +32,15 @@ const handleLogout = () => {
         </div>
         <div class="px-4 pt-1 pb-5 overflow-y-scroll flex-grow">
             <router-view v-slot="{ Component, route }">
-                <transition name="fade" mode="out-in">
-                    <component :is="Component" :key="route.path" class="bg-white"  />
+                <transition :name="app.transitionDirection">
+                    <component :is="Component" :key="route.path" class="bg-white" />
                 </transition>
             </router-view>
         </div>
         <div class="text-center text-sm text-gray-400">v1.0.0</div>
 
         <BottomDrawer></BottomDrawer>
-        <Toast/>
+        <Toast />
     </div>
 </template>
 

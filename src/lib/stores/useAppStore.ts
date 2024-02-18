@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { Component, reactive } from 'vue'
+import { Component, reactive, ref } from 'vue'
 
 
 const useAppStore = defineStore('app-settings', () => {
@@ -13,6 +13,8 @@ const useAppStore = defineStore('app-settings', () => {
         props: null
     })
 
+    const transitionDirection = ref<'slide-ltr' | 'slide-rtl'>('slide-ltr')
+
     const closeBottomDrawer = () => {
         bottomDrawer.isOpened = false
 
@@ -23,7 +25,7 @@ const useAppStore = defineStore('app-settings', () => {
         }, 250)
     }
 
-    return { bottomDrawer, closeBottomDrawer }
+    return { bottomDrawer, closeBottomDrawer, transitionDirection }
 })
 
 export default useAppStore
