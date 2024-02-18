@@ -30,7 +30,7 @@ const handleLogout = () => {
         <div class="px-[50px] mb-6">
             <NavBar></NavBar>
         </div>
-        <div class="px-4 pt-1 pb-5 overflow-y-scroll flex-grow">
+        <div class="px-4 pt-1 pb-5 overflow-y-scroll flex-grow relative">
             <router-view v-slot="{ Component, route }">
                 <transition :name="app.transitionDirection">
                     <component :is="Component" :key="route.path" class="bg-white" />
@@ -45,5 +45,12 @@ const handleLogout = () => {
 </template>
 
 <style scoped>
+.slide-ltr-enter-active,
+.slide-ltr-leave-active,
+.slide-rtl-enter-active,
+.slide-rtl-leave-active {
+    /* minus the gap inside the div that wrap the router-view in Layout, px-4 */
+    width: calc(100% - 2rem);
+}
 
 </style>
